@@ -13,7 +13,7 @@ struct ModelVertex {
 	ModelVertex(ModelVertex const &mv);
 };
 
-class Parser {
+class NFG_Parser {
 public:
 	static void Parse(std::string file_full_path, std::vector<ModelVertex> &mdl, std::vector<Vector3_uhint> &indices);
 };

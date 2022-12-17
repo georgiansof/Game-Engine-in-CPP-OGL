@@ -1,1 +1,7 @@
-﻿  NewTrainingFramework.vcxproj -> C:\Users\je_gi\Desktop\proiect gameloft\NewTrainingFramework_2015\BIN-Nvidia\NewTrainingFramework.exe
+﻿cl : command line  warning D9035: option 'Gm' has been deprecated and will be removed in a future release
+  Camera.cpp
+C:\Users\je_gi\Desktop\proiect gameloft\workshop-gameloft\NewTrainingFramework_2015\NewTrainingFramework\Camera.cpp(38,20): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+C:\Users\je_gi\Desktop\proiect gameloft\workshop-gameloft\NewTrainingFramework_2015\NewTrainingFramework\Camera.cpp(47,20): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+C:\Users\je_gi\Desktop\proiect gameloft\workshop-gameloft\NewTrainingFramework_2015\NewTrainingFramework\Camera.cpp(56,20): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+Camera.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
+  NewTrainingFramework.vcxproj -> C:\Users\je_gi\Desktop\proiect gameloft\workshop-gameloft\NewTrainingFramework_2015\BIN-Nvidia\NewTrainingFramework.exe

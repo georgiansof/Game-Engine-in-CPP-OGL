@@ -9,7 +9,7 @@ fprintf(stderr, "Incorrect parsed file format. var:[%s] index:[%d]\n",variable,i
 exit(EXIT_FAILURE); \
 		}
 
-void Parser::Parse(std::string file_full_path, std::vector<ModelVertex> &mdl, std::vector<Vector3_uhint> &indices) {
+void NFG_Parser::Parse(std::string file_full_path, std::vector<ModelVertex> &mdl, std::vector<Vector3_uhint> &indices) {
 	std::ifstream fin(file_full_path);
 	char sep[] = " :[,;";
 	char buff[256];

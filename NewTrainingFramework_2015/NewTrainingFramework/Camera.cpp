@@ -11,13 +11,13 @@ Camera::Camera() {
 	target = Vector3(0, 0, 1);
 	up = Vector3(0, 1, 0);
 
-	moveSpeed = 1;
+	moveSpeed = 100;
 	rotateSpeed = 1;
 
 	fov = 3.141592f/2.0f; /// 90 de grade
 
 	_near = 0.1f;
-	_far = 100.0f;
+	_far = 10000.0f;
 
 	deltaTime = 0;
 

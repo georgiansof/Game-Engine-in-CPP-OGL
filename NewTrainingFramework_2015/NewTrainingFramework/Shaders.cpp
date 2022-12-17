@@ -25,9 +25,7 @@ int Shaders::Init(char * fileVertexShader, char * fileFragmentShader)
 	tangentAttribute = glGetAttribLocation(program, "a_tangent");
 	uvAttribute = glGetAttribLocation(program, "a_uv");
 	colorAttribute = glGetAttribLocation(program, "a_color");
-	matrixUniform = glGetUniformLocation(program, "m_rotatie");
 	cam_matrixUniform = glGetUniformLocation(program, "m_camera");
-
 	return 0;
 }
 
