@@ -16,11 +16,13 @@
 
 
 GLuint model_vboId;
+GLuint texture_vboId;
 GLuint indices_vboId;
 Shaders model_shader;
 
 Camera cam;
 Matrix mPerspective;
+unsigned char* pixels_array;
 
 float prag=0.016f; /// 60 fps
 float acumm;
@@ -33,7 +35,7 @@ std::vector<Vector3_uhint> indices;
 int Init(ESContext* esContext)
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	
+	glEnable(GL_DEPTH_TEST);
 	glGenBuffers(1, &indices_vboId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_vboId);
 
@@ -56,6 +58,21 @@ int Init(ESContext* esContext)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(ModelVertex) * n, mdl_data , GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+	glGenTextures(1, &texture_vboId);
+	glBindTexture(GL_TEXTURE_2D, texture_vboId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	int texture_width=0, texture_height=0, bpp=0;
+	pixels_array = (unsigned char*) LoadTGA("..\\..\\NewResourcesPacket\\Textures\\Croco.tga", &texture_width, &texture_height, &bpp);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture_width, texture_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels_array);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE0, 0);
+
 	delete mdl_data;
 
 	//creation of shaders and program 
@@ -69,12 +86,14 @@ void Draw ( ESContext *esContext )
 {
 	Matrix m_cam = cam.get_viewMatrix();
 	Matrix mvp = m_cam * mPerspective;
-	glClear(GL_COLOR_BUFFER_BIT);
-
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
 	////////
 	glUseProgram(model_shader.program);
 	glBindBuffer(GL_ARRAY_BUFFER, model_vboId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_vboId);
+
+	glBindTexture(GL_TEXTURE0, texture_vboId);
 
 	if (model_shader.positionAttribute != -1) {
 		glEnableVertexAttribArray(model_shader.positionAttribute);
@@ -101,13 +120,16 @@ void Draw ( ESContext *esContext )
 	}
 	if (model_shader.uvAttribute != -1) {
 		glEnableVertexAttribArray(model_shader.uvAttribute);
-		glVertexAttribPointer(model_shader.uvAttribute, 2, GL_FLOAT, GL_FALSE, sizeof(ModelVertex),(GLvoid*) (5*sizeof(Vector3)));
+		glVertexAttribPointer(model_shader.uvAttribute, 2, GL_FLOAT, GL_FALSE, sizeof(ModelVertex) ,(GLvoid*) (5*sizeof(Vector3)));
 	}
+	if (model_shader.textureUniform != -1)
+		glUniform1i(model_shader.textureUniform, 0);
 
 	glDrawElements(GL_TRIANGLES, 3*indices.size(), GL_UNSIGNED_SHORT, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE0, 0);
 	eglSwapBuffers ( esContext->eglDisplay, esContext->eglSurface );
 	
 }
@@ -193,6 +215,9 @@ void Key ( ESContext *esContext, unsigned char key, bool bIsPressed)
 void CleanUp()
 {
 	glDeleteBuffers(1, &model_vboId);
+	glDeleteBuffers(1, &indices_vboId);
+	glDeleteBuffers(1, &texture_vboId);
+	delete[] pixels_array;
 }
 
 int _tmain(int argc, _TCHAR* argv[])

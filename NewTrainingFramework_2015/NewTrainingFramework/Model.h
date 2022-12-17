@@ -7,7 +7,7 @@
 #include "../Utilities/utilities.h"
 
 struct ModelVertex {
-	Vector3 pos, norm, binorm, tgt;
+	Vector3 pos,color, norm, binorm, tgt;
 	Vector2 uv;
 	ModelVertex();
 	ModelVertex(ModelVertex const &mv);

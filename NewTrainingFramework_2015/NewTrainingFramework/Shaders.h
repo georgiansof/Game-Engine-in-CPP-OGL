@@ -15,6 +15,7 @@ public:
 	GLint binormalAttribute;
 	GLint tangentAttribute;
 	GLint uvAttribute;
+	GLint textureUniform;
 
 	int Init(char * fileVertexShader, char * fileFragmentShader);
 	~Shaders();

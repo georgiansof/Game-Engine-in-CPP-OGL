@@ -26,6 +26,7 @@ int Shaders::Init(char * fileVertexShader, char * fileFragmentShader)
 	uvAttribute = glGetAttribLocation(program, "a_uv");
 	colorAttribute = glGetAttribLocation(program, "a_color");
 	cam_matrixUniform = glGetUniformLocation(program, "m_camera");
+	textureUniform = glGetUniformLocation(program, "u_texture");
 	return 0;
 }
 
