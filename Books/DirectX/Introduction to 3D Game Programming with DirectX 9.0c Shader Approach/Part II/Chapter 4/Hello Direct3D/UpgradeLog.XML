@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="Hello Direct3D">
+</Property><Property Name="Solution File" Value="C:\Users\MPopa\My Documents\My Dropbox\Public\3D Stuff\Introduction to 3D Game Programming with DirectX 9.0c Shader Approach\Part II\Chapter 4\Hello Direct3D\Hello Direct3D.sln">
+</Property><Property Name="User Options File" Value="C:\Users\MPopa\My Documents\My Dropbox\Public\3D Stuff\Introduction to 3D Game Programming with DirectX 9.0c Shader Approach\Part II\Chapter 4\Hello Direct3D\Hello Direct3D.suo">
+</Property><Property Name="Date" Value="Thursday, 3 December 2009">
+</Property><Property Name="Time" Value="13:46 PM">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="Hello Direct3D.sln" Description="File successfully backed up as C:\Users\MPopa\My Documents\My Dropbox\Public\3D Stuff\Introduction to 3D Game Programming with DirectX 9.0c Shader Approach\Part II\Chapter 4\Hello Direct3D\Hello Direct3D.sln.old">
+</Event><Event ErrorLevel="0" Project="" Source="Hello Direct3D.suo" Description="File successfully backed up as C:\Users\MPopa\My Documents\My Dropbox\Public\3D Stuff\Introduction to 3D Game Programming with DirectX 9.0c Shader Approach\Part II\Chapter 4\Hello Direct3D\Hello Direct3D.suo.old">
+</Event><Event ErrorLevel="0" Project="Hello Direct3D" Source="Hello Direct3D.vcproj" Description="Web deployment to the local IIS server is no longer supported. The Web Deployment build tool has been removed from your project settings.">
+</Event><Event ErrorLevel="1" Project="Hello Direct3D" Source="Hello Direct3D.vcproj" Description="This application has been updated to include settings related to the User Account Control (UAC) feature of Windows Vista. By default, when run on Windows Vista with UAC enabled, this application is marked to run with the same privileges as the process that launched it. This marking also disables the application from running with virtualization. You can change UAC related settings from the Property Pages of the project.">
+</Event><Event ErrorLevel="0" Project="Hello Direct3D" Source="Hello Direct3D.vcproj" Description="Project file successfully backed up as 'C:\Users\MPopa\My Documents\My Dropbox\Public\3D Stuff\Introduction to 3D Game Programming with DirectX 9.0c Shader Approach\Part II\Chapter 4\Hello Direct3D\Hello Direct3D.vcproj.8.00.old'.">
+</Event><Event ErrorLevel="0" Project="Hello Direct3D" Source="Hello Direct3D.vcproj" Description="Project upgraded successfully.">
+</Event><Event ErrorLevel="3" Project="Hello Direct3D" Source="Hello Direct3D.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="Hello Direct3D.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="Hello Direct3D.sln" Description="Converted">
+</Event></UpgradeLog>

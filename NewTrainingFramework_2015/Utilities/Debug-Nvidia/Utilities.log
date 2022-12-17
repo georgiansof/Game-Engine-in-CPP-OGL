@@ -1,0 +1,6 @@
+﻿cl : command line  warning D9035: option 'Gm' has been deprecated and will be removed in a future release
+  Math.cpp
+C:\Users\je_gi\Desktop\proiect gameloft\NewTrainingFramework_2015\Utilities\Math.cpp(10,13): warning C4244: 'return': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\je_gi\Desktop\proiect gameloft\NewTrainingFramework_2015\Utilities\Math.cpp(112,13): warning C4244: 'return': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\je_gi\Desktop\proiect gameloft\NewTrainingFramework_2015\Utilities\Math.cpp(225,13): warning C4244: 'return': conversion from 'double' to 'GLfloat', possible loss of data
+  Utilities.vcxproj -> C:\Users\je_gi\Desktop\proiect gameloft\NewTrainingFramework_2015\BIN-Nvidia\Utilities.lib
