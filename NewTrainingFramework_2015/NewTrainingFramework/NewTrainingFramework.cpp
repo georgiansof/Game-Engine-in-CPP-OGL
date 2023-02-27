@@ -12,8 +12,13 @@
 #include <vector>
 #include <string>
 
-#include "../Utilities/utilities.h" // if you use STL, please include this line AFTER all other include
+/*#include "../Utilities/rapidxml.hpp"
+#include "../Utilities/rapidxml_iterators.hpp"
+#include "../Utilities/rapidxml_print.hpp"
+#include "../Utilities/rapidxml_utils.hpp"*/
 
+#include "Managers.h"
+#include "../Utilities/utilities.h" // if you use STL, please include this line AFTER all other include
 
 GLuint model_vboId;
 GLuint texture_vboId;
@@ -220,6 +225,7 @@ void CleanUp()
 	delete[] pixels_array;
 }
 
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//identifying memory leaks
@@ -229,7 +235,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
     esInitContext ( &esContext );
 
-	esCreateWindow ( &esContext, "Hello Triangle", Globals::screenWidth, Globals::screenHeight, ES_WINDOW_RGB | ES_WINDOW_DEPTH);
+	esCreateWindow ( &esContext, "georgiansof@Gameloft Workshop", Globals::screenWidth, Globals::screenHeight, ES_WINDOW_RGB | ES_WINDOW_DEPTH);
 	
 	mPerspective = mPerspective.SetPerspective(cam.get_fov(),(GLfloat) Globals::screenWidth / Globals::screenHeight, cam.get_near(), cam.get_far());
 
@@ -239,6 +245,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::string model_file = "Croco.nfg";
 
 	NFG_Parser::Parse(model_folder + "\\" + model_file, mdl, indices);
+
+	ResourceManager::getInstance()->ParseXML("resourceManager.XML");
+	//Texture* tmpTxt = ResourceManager::getInstance()->getTexture(4);
+	//tmpTxt->Load();
+	//TextureResource tmpTxtRes;
+	//tmpTxt->GetTextureResource(&tmpTxtRes);
 
 
 	/*int i = 0;

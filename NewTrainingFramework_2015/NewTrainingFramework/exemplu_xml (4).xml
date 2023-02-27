@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<obiecte>
+	<obiect id="100" nume="zar">
+		<model info="cub">1</model>
+		<textura folder="texturi_zar">7</textura>
+	</obiect>
+	<obiect id="27" nume="minge">
+		<model info="sfera">3</model>
+		<textura folder="texturi_jucarii">23</textura>
+	</obiect>
+</obiecte>
