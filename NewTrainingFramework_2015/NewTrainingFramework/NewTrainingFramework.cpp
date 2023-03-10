@@ -1,5 +1,15 @@
 // NewTrainingFramework.cpp : Defines the entry point for the console application.
-//
+/** 
+	ISSUES: wired?, fullscreen
+	target nu afecteaza camera
+	glclearcolor alpha nu merge?
+**/
+
+/***
+HIGHLIGHTS:
+	more actions per key or more keys per action
+
+***/
 
 #include "stdafx.h"
 #include "Vertex.h"
@@ -11,6 +21,7 @@
 #include "Model.h"
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 /*#include "../Utilities/rapidxml.hpp"
 #include "../Utilities/rapidxml_iterators.hpp"
@@ -25,7 +36,7 @@ GLuint texture_vboId;
 GLuint indices_vboId;
 Shaders model_shader;
 
-Camera cam;
+Camera *activeCamera;
 Matrix mPerspective;
 unsigned char* pixels_array;
 
@@ -39,7 +50,8 @@ std::vector<Vector3_uhint> indices;
 
 int Init(ESContext* esContext)
 {
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	Vector4 bgcolor = SceneManager::getInstance()->getBgColor();
+	glClearColor(bgcolor.x, bgcolor.y, bgcolor.z, bgcolor.w);
 	glEnable(GL_DEPTH_TEST);
 	glGenBuffers(1, &indices_vboId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_vboId);
@@ -50,15 +62,18 @@ int Init(ESContext* esContext)
 	for (int i = 0; i < n; ++i)
 		indices_data[i] = indices[i];
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Vector3_uhint) * n, indices_data, GL_STATIC_DRAW);
-	delete indices_data;
+	delete[] indices_data;
 
 	glGenBuffers(1, &model_vboId);
 	glBindBuffer(GL_ARRAY_BUFFER, model_vboId);
 
 	n = mdl.size();
 	ModelVertex (*mdl_data) = new ModelVertex[n];
-	for (int i = 0; i < n; ++i)
+	for (int i = 0; i < n; ++i) {
 		mdl_data[i] = mdl[i];
+		mdl_data[i].pos.z = mdl[i].pos.z + 200;
+		mdl_data[i].pos.x = mdl[i].pos.x + 75;
+	}
 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(ModelVertex) * n, mdl_data , GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -89,7 +104,7 @@ int Init(ESContext* esContext)
 
 void Draw ( ESContext *esContext )
 {
-	Matrix m_cam = cam.get_viewMatrix();
+	Matrix m_cam = activeCamera->get_viewMatrix();
 	Matrix mvp = m_cam * mPerspective;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
@@ -143,15 +158,15 @@ void Update ( ESContext *esContext, float deltaTime )
 {
 	acumm += deltaTime;
 	if (acumm >= prag) {
-		cam.set_deltaTime(acumm);
+		activeCamera->set_deltaTime(acumm);
 		acumm = 0;
 		//if (rotating)
 		//	if (screenSide == SCREEN_LEFT) 
-		//		cam.rotateOy(-1);
+		//		activeCamera->rotateOy(-1);
 		//	else 
-		//		cam.rotateOy(1);
+		//		activeCamera->rotateOy(1);
 		/// render
-		//cam.rotateOy(1);
+		//activeCamera->rotateOy(1);
 	}
 }
 
@@ -173,48 +188,78 @@ void MouseEvent(ESContext* esContext, MouseButton button, MouseEventType eventTy
 }
 
 void Key ( ESContext *esContext, unsigned char key, bool bIsPressed)
-{
-	if(bIsPressed)
+{	
+	std::unordered_multimap<unsigned char,SceneManager::action> controls = SceneManager::getInstance()->getKeysToControls();
+	auto range = controls.equal_range(key);
+	for (auto p = range.first; p != range.second; ++p) 
+		if (p->first == key) {
+			if (p->second == SceneManager::MOVE_CAMERA_POSITIVE_X)
+				activeCamera->moveOx(1);
+			if (p->second == SceneManager::MOVE_CAMERA_POSITIVE_Y)
+				activeCamera->moveOy(1);
+			if (p->second == SceneManager::MOVE_CAMERA_POSITIVE_Z)
+				activeCamera->moveOz(1);
+			if (p->second == SceneManager::MOVE_CAMERA_NEGATIVE_X)
+				activeCamera->moveOx(-1);
+			if (p->second == SceneManager::MOVE_CAMERA_NEGATIVE_Y)
+				activeCamera->moveOy(-1);
+			if (p->second == SceneManager::MOVE_CAMERA_NEGATIVE_Z)
+				activeCamera->moveOz(-1);
+			if (p->second == SceneManager::ROTATE_CAMERA_POSITIVE_X)
+				activeCamera->rotateOx(1);
+			if (p->second == SceneManager::ROTATE_CAMERA_POSITIVE_Y)
+				activeCamera->rotateOy(1);
+			if (p->second == SceneManager::ROTATE_CAMERA_POSITIVE_Z)
+				activeCamera->rotateOz(1);
+			if (p->second == SceneManager::ROTATE_CAMERA_NEGATIVE_X)
+				activeCamera->rotateOx(-1);
+			if (p->second == SceneManager::ROTATE_CAMERA_NEGATIVE_Y)
+				activeCamera->rotateOy(-1);
+			if (p->second == SceneManager::ROTATE_CAMERA_NEGATIVE_Z)
+				activeCamera->rotateOz(-1);
+		}
+	
+	/*if (bIsPressed)
 		switch (key)
 		{
 		case 'A':
-			cam.moveOx(-1);
+			activeCamera->moveOx(-1);
 			break;
 		case 'D':
-			cam.moveOx(1);
+			activeCamera->moveOx(1);
 			break;
 		case 'S':
-			cam.moveOz(1);
+			activeCamera->moveOz(1);
 			break;
 		case 'W':
-			cam.moveOz(-1);
+			activeCamera->moveOz(-1);
 			break;
 		case 'Q':
-			cam.moveOy(1);
+			activeCamera->moveOy(1);
 			break;
 		case 'E':
-			cam.moveOy(-1);
+			activeCamera->moveOy(-1);
 			break;
 		case '1':
-			cam.rotateOz(1);
+			activeCamera->rotateOz(1);
 			break;
 		case '3':
-			cam.rotateOz(-1);
+			activeCamera->rotateOz(-1);
 			break;
 		case '2':
-			cam.rotateOx(-1);
+			activeCamera->rotateOx(-1);
 			break;
 		case 'X':
-			cam.rotateOx(1);
+			activeCamera->rotateOx(1);
 			break;
 		case 'Z':
-			cam.rotateOy(1);
+			activeCamera->rotateOy(1);
 			break;
 		case 'C':
-			cam.rotateOy(-1);
+			activeCamera->rotateOy(-1);
 			break;
 		}
-
+		*/
 }
 
 void CleanUp()
@@ -231,14 +276,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	//identifying memory leaks
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF ); 
 
-	ESContext esContext;
-
-    esInitContext ( &esContext );
-
-	esCreateWindow ( &esContext, "georgiansof@Gameloft Workshop", Globals::screenWidth, Globals::screenHeight, ES_WINDOW_RGB | ES_WINDOW_DEPTH);
-	
-	mPerspective = mPerspective.SetPerspective(cam.get_fov(),(GLfloat) Globals::screenWidth / Globals::screenHeight, cam.get_near(), cam.get_far());
-
 	///DEBUG PARSARE MODEL
 
 	std::string model_folder = "..\\..\\NewResourcesPacket\\Models";
@@ -247,11 +284,24 @@ int _tmain(int argc, _TCHAR* argv[])
 	NFG_Parser::Parse(model_folder + "\\" + model_file, mdl, indices);
 
 	ResourceManager::getInstance()->ParseXML("resourceManager.XML");
+	SceneManager::getInstance()->ParseXML("sceneManager.XML");
+	activeCamera = SceneManager::getInstance()->getActiveCamera();
+
+	mPerspective = mPerspective.SetPerspective(activeCamera->get_fov(), (GLfloat)Globals::screenWidth / Globals::screenHeight, activeCamera->get_near(), activeCamera->get_far());
+
+	std::vector<SceneManager::action> zactions = SceneManager::getInstance()->getActionsFromKey('Z');
+	std::cout << "Z actions:\n";
+	for (auto x : zactions) {
+		std::cout << x << ' ';
+	}
+	std::cout << '\n';
+
+
 	//Texture* tmpTxt = ResourceManager::getInstance()->getTexture(4);
 	//tmpTxt->Load();
 	//TextureResource tmpTxtRes;
 	//tmpTxt->GetTextureResource(&tmpTxtRes);
-
+	
 
 	/*int i = 0;
 	for (ModelVertex x : mdl)
@@ -261,6 +311,11 @@ int _tmain(int argc, _TCHAR* argv[])
 		printf("Index [%d]: %d, %d, %d\n", i++, x.x, x.y, x.z);*/
 
 	
+	ESContext esContext;
+	esInitContext(&esContext);
+
+	GLuint windowflags = (windowflags ^ windowflags) | ES_WINDOW_RGB | ES_WINDOW_DEPTH;
+	esCreateWindow(&esContext, SceneManager::getInstance()->getGameName().c_str(), SceneManager::getInstance()->getScreenWidth(), SceneManager::getInstance()->getScreenHeight(), windowflags);
 
 	if ( Init ( &esContext ) != 0 )
 		return 0;
@@ -275,6 +330,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//releasing OpenGL resources
 	CleanUp();
 
+	
 
 	printf("Press any key...\n");
 	_getch();

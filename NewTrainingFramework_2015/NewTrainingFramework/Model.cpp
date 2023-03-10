@@ -161,7 +161,7 @@ void NFG_Parser::Parse(std::string file_full_path, std::vector<ModelVertex> &mdl
 	fin.getline(buff, 255);
 	p = strtok(buff, sep);
 	p = strtok(0, sep);
-	n = atoi(p)/3; /// TOFIX
+	n = atoi(p)/3;
 	
 	for (int i = 0; i < n; ++i) {
 		fin.getline(buff, 255);

@@ -1,10 +1,14 @@
 #pragma once
 #include "stdafx.h"
+#include <string>
 #include "../Utilities/utilities.h"
+
+class ResourceManager;
 
 class Camera
 {
-	Vector3 target;
+	Vector3 position;
+	
 	Vector3 up;
 	Vector3 xAxis, yAxis, zAxis;
 	GLfloat moveSpeed;
@@ -14,10 +18,9 @@ class Camera
 	GLfloat fov;
 	GLfloat deltaTime;
 	Matrix worldMatrix, viewMatrix;
-
+	enum {FIRST_PERSON,THIRD_PERSON} type; /// default: first person
 public:
-	Vector3 position;
-
+	Vector3 target;
 	void set_deltaTime(GLfloat);
 	void setWorldMatrix(Matrix);
 	Matrix getWorldMatrix();
@@ -34,4 +37,5 @@ public:
 	void rotateOz(int);
 	void updateWorldView();
 	Camera();
+	friend class SceneManager;
 };

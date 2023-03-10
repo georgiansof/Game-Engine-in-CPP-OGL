@@ -7,6 +7,7 @@ void Camera :: setWorldMatrix(Matrix worldMatrix) {this->worldMatrix = worldMatr
 Matrix Camera :: getWorldMatrix() {return worldMatrix;}
 
 Camera::Camera() {
+	type = FIRST_PERSON;
 	position = Vector3(0,0,-1);
 	target = Vector3(0, 0, 1);
 	up = Vector3(0, 1, 0);
@@ -53,7 +54,7 @@ void Camera::moveOy(int dir) {
 
 void Camera::moveOz(int dir) {
 	Vector3 forward, deplasare;
-	forward = zAxis * dir;
+	forward = - zAxis * dir;
 	deplasare = forward * moveSpeed * deltaTime;
 	position += deplasare;
 	target += deplasare;
