@@ -27,6 +27,10 @@ int Shaders::Init(char * fileVertexShader, char * fileFragmentShader)
 	colorAttribute = glGetAttribLocation(program, "a_color");
 	cam_matrixUniform = glGetUniformLocation(program, "m_camera");
 	textureUniform = glGetUniformLocation(program, "u_texture");
+	fogColorUniform = glGetUniformLocation(program, "u_fogColor");
+	camPosition = glGetUniformLocation(program, "u_camPosition");
+	smallRadius = glGetUniformLocation(program, "u_smallRadius");
+	bigRadius = glGetUniformLocation(program, "u_bigRadius");
 	return 0;
 }
 

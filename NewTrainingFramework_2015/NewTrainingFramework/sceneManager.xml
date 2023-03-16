@@ -101,7 +101,7 @@
 				<z>-1</z>
 			</position>
 			<target>
-				<x>0</x>
+				<x>1</x>
 				<y>0</y>
 				<z>1</z>
 			</target>
@@ -253,6 +253,19 @@
 		</object>
 	</objects>
 	
+	<fog>
+		<radiuses>
+			<small>800</small>
+			<big>900</big>
+		</radiuses>
+
+		<color blend = "true">
+			<r>1.0</r>
+			<g>1.0</g>
+			<b>1.0</b>
+		</color>
+	</fog>
+
 	<!--
 	<ambientalLight>
 		<color>
@@ -262,7 +275,7 @@
 		</color>
 		<ratio>0.2</ratio>
 	</ambientalLight>
-	
+
 	<lights>
 		<light id="1">
 			<associatedObject>2</associatedObject>

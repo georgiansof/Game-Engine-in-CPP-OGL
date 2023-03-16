@@ -187,6 +187,11 @@ private:
 	std::unordered_map<int,Camera*> cameras;
 	std::unordered_multimap<unsigned char, action> keysToControls;
 	std::unordered_multimap<action, unsigned char> controlsToKeys;
+	struct {
+		float smallRadius, bigRadius;
+		Vector3 color;
+		bool blendToSkybox;
+	} fog;
 	struct { Vector3 Ox, Oy, Oz; } objAxesColor, camAxesColor;
 
 	std::unordered_map<int, SceneObject*> sceneObjects;
@@ -194,6 +199,7 @@ private:
 	SceneManager();
 	~SceneManager();
 public:
+	Vector3 getFogColor();
 	std::string getGameName();
 	static SceneManager* getInstance();
 	int getScreenHeight();
@@ -205,5 +211,9 @@ public:
 	int ParseXML(char* xml_path);
 	Camera* getCameraWithId(int id);
 	Camera* getActiveCamera();
+	int setActiveCamera(Camera* cam);
 	SceneObject* getSceneObject(int id);
+	float getFogBigRadius();
+	float getFogSmallRadius();
+	int addCamera(int id, Camera* cam);
 };

@@ -36,6 +36,7 @@ public:
 	void rotateOy(int);
 	void rotateOz(int);
 	void updateWorldView();
+	Vector3 getPosition();
 	Camera();
 	friend class SceneManager;
 };

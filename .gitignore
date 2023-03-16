@@ -1,0 +1,12 @@
+
+*.vsidx
+*.vsidx
+NewTrainingFramework_2015/.vs/NewTrainingFramework/v17/.suo
+*.db
+*.ipch
+*.obj
+*.tlog
+*.ilk
+*.idb
+*.pdb
+*.exe

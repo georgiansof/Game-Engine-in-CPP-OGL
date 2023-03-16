@@ -505,6 +505,10 @@ SceneManager::SceneManager() {
 	camAxesColor.Ox = Vector3(1, 1, 1);
 	camAxesColor.Oy = Vector3(1, 1, 1);
 	camAxesColor.Oz = Vector3(1, 1, 1);
+	fog.bigRadius = 900;
+	fog.smallRadius = 800;
+	fog.color = Vector3(1,1,1);
+	fog.blendToSkybox = false;
 }
 
 SceneManager::~SceneManager() {
@@ -789,8 +793,11 @@ void SceneManager::ParseNode(xml_node<>* pNode, string additive_relative_path) {
 																			cam->_far = atof(r->value());
 																		else
 																			;
-									if (camId != -1)
+								
+									if (camId != -1) {
+										cam->updateWorldView();
 										this->cameras.insert(make_pair(camId, cam));
+									}
 									else
 										delete cam;
 									if (activeCameraId != -1 && camId == activeCameraId)
@@ -917,6 +924,7 @@ void SceneManager::ParseNode(xml_node<>* pNode, string additive_relative_path) {
 																								;
 																					else
 																						;
+											
 											this->sceneObjects.insert(make_pair(objptr->id, objptr));
 										}
 									
@@ -1015,7 +1023,42 @@ void SceneManager::ParseNode(xml_node<>* pNode, string additive_relative_path) {
 																	
 
 									}
-
+									else
+										if (strcmp(_strlwr(p->name()), "fog") == 0) {
+											for (xml_node <>* q = p->first_node(); q; q = q->next_sibling())
+												if (strcmp(_strlwr(q->name()), "color") == 0) {
+													for (xml_attribute<>* attr = q->first_attribute(); attr; attr = attr->next_attribute())
+														if (strcmp(_strlwr(attr->name()), "blend") == 0)
+															if (strcmp(_strlwr(attr->value()), "true") == 0)
+																this->fog.blendToSkybox = true;
+															else
+																;
+														else
+															;
+													/// fog.blendToSkybox false elseway from destructor
+													if (this->fog.blendToSkybox == false) {
+														for (xml_node<>* color = q->first_node(); color; color = color->next_sibling())
+															if (strcmp(_strlwr(color->name()), "r") == 0)
+																this->fog.color.x = atof(color->value());
+															else
+																if (strcmp(_strlwr(color->name()), "g") == 0)
+																	this->fog.color.y = atof(color->value());
+																else
+																	if (strcmp(_strlwr(color->name()), "b") == 0)
+																		this->fog.color.z = atof(color->value());
+													}
+												}
+												else
+													if (strcmp(_strlwr(q->name()), "radiuses") == 0) {
+														for (xml_node<>* r = q->first_node(); r; r = r->next_sibling())
+															if (strcmp(_strlwr(r->name()), "small") == 0)
+																this->fog.smallRadius = atof(r->value());
+															else
+																if (strcmp(_strlwr(r->name()), "big") == 0)
+																	this->fog.bigRadius = atof(r->value());
+													}
+												
+										}
 							
 
 			
@@ -1055,6 +1098,13 @@ Camera* SceneManager::getCameraWithId(int id) {
 	return ret;
 }
 
+int SceneManager::setActiveCamera(Camera* cam) {
+	if (cam == nullptr)
+		return -1;
+	this-> activeCamera = cam;
+	return 0;
+}
+
 Camera* SceneManager::getActiveCamera() {
 	return this->activeCamera;
 }
@@ -1065,4 +1115,24 @@ SceneObject* SceneManager::getSceneObject(int id) {
 	if (p != sceneObjects.end())
 		ret = p->second;
 	return ret;
+}
+
+Vector3 SceneManager::getFogColor() {
+	return this->fog.color;
+}
+
+int SceneManager::addCamera(int id, Camera* cam) {
+	if (this->getCameraWithId(id) != nullptr) {
+		this->cameras.insert(make_pair(id, cam));
+		return 0;
+	}
+	return -1;
+}
+
+float SceneManager::getFogBigRadius() {
+	return this->fog.bigRadius;
+}
+
+float SceneManager::getFogSmallRadius() {
+	return this->fog.smallRadius;
 }

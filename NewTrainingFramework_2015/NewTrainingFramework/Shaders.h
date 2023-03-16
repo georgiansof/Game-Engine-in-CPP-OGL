@@ -16,6 +16,10 @@ public:
 	GLint tangentAttribute;
 	GLint uvAttribute;
 	GLint textureUniform;
+	GLint fogColorUniform;
+	GLint camPosition;
+	GLint smallRadius;
+	GLint bigRadius;
 
 	int Init(char * fileVertexShader, char * fileFragmentShader);
 	~Shaders();

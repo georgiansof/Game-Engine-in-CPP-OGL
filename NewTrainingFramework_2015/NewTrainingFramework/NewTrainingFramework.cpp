@@ -1,8 +1,6 @@
 // NewTrainingFramework.cpp : Defines the entry point for the console application.
 /** 
 	ISSUES: wired?, fullscreen
-	target nu afecteaza camera
-	glclearcolor alpha nu merge?
 **/
 
 /***
@@ -38,6 +36,7 @@ Shaders model_shader;
 
 Camera *activeCamera;
 Matrix mPerspective;
+SceneManager* sceneManager;
 unsigned char* pixels_array;
 
 float prag=0.016f; /// 60 fps
@@ -51,7 +50,7 @@ std::vector<Vector3_uhint> indices;
 int Init(ESContext* esContext)
 {
 	Vector4 bgcolor = SceneManager::getInstance()->getBgColor();
-	glClearColor(bgcolor.x, bgcolor.y, bgcolor.z, bgcolor.w);
+	glClearColor(bgcolor.x, bgcolor.y, bgcolor.z, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glGenBuffers(1, &indices_vboId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_vboId);
@@ -144,6 +143,22 @@ void Draw ( ESContext *esContext )
 	}
 	if (model_shader.textureUniform != -1)
 		glUniform1i(model_shader.textureUniform, 0);
+
+	if (model_shader.fogColorUniform != -1) {
+		Vector3 fogColor = SceneManager::getInstance()->getFogColor();
+		glUniform3f(model_shader.fogColorUniform, (GLfloat) fogColor.x, (GLfloat) fogColor.y, (GLfloat) fogColor.z);
+	}
+
+	if (model_shader.camPosition != -1) {
+		Vector3 campos = activeCamera->getPosition();
+		glUniform3f(model_shader.camPosition, (GLfloat)campos.x, (GLfloat)campos.y, (GLfloat)campos.z);
+	}
+
+	if (model_shader.smallRadius != -1)
+		glUniform1f(model_shader.smallRadius, sceneManager->getFogSmallRadius());
+
+	if (model_shader.bigRadius != -1)
+		glUniform1f(model_shader.bigRadius, sceneManager->getFogBigRadius());
 
 	glDrawElements(GL_TRIANGLES, 3*indices.size(), GL_UNSIGNED_SHORT, 0);
 
@@ -286,6 +301,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	ResourceManager::getInstance()->ParseXML("resourceManager.XML");
 	SceneManager::getInstance()->ParseXML("sceneManager.XML");
 	activeCamera = SceneManager::getInstance()->getActiveCamera();
+	sceneManager = SceneManager::getInstance();
+	if (activeCamera == nullptr) {
+		Camera* camptr = new Camera;
+		int id = 1;
+		while (sceneManager->addCamera(id, camptr) == -1)
+			++id;
+		sceneManager->setActiveCamera(camptr);
+		activeCamera = camptr;
+	}
 
 	mPerspective = mPerspective.SetPerspective(activeCamera->get_fov(), (GLfloat)Globals::screenWidth / Globals::screenHeight, activeCamera->get_near(), activeCamera->get_far());
 

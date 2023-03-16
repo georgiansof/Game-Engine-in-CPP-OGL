@@ -132,3 +132,7 @@ Matrix Camera::get_viewMatrix() {return viewMatrix;}
 GLfloat Camera::get_fov() { return fov; }
 GLfloat Camera::get_far() { return _far; }
 GLfloat Camera::get_near() { return _near; }
+
+Vector3 Camera::getPosition() {
+	return this->position;
+}
