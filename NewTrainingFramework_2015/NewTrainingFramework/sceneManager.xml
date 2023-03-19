@@ -101,7 +101,7 @@
 				<z>-1</z>
 			</position>
 			<target>
-				<x>1</x>
+				<x>0</x>
 				<y>0</y>
 				<z>1</z>
 			</target>
@@ -135,9 +135,9 @@
 				<texture id="4"/>
 			</textures>
 			<position>
-				<x>20.5</x>
+				<x>100</x>
 				<y>27</y>
-				<z>21.22</z>
+				<z>100</z>
 			</position>
 			<rotation>
 				<x>0.5</x>
@@ -176,7 +176,7 @@
 		<object id="3">
 			
 			<model>5</model>
-			<shader>10</shader>
+			<shader>11</shader>
 			<type>normal</type>
 			<wired/>
 			<name>Mesh_minge</name>
@@ -186,9 +186,9 @@
 				<b>0.0</b>
 			</color>
 			<position>
-				<x>3.5</x>
+				<x>100</x>
 				<y>0</y>
-				<z>20</z>
+				<z>-50</z>
 			</position>
 			<rotation>
 				<x>0</x>
@@ -236,9 +236,9 @@
 				<!-- TO DO adaugati texturile-->
 			</textures>
 			<position>
-				<x>1.5</x>
-				<y>2.4</y>
-				<z>7</z>
+				<x>0</x>
+				<y>-50</y>
+				<z>0</z>
 			</position>
 			<rotation>
 				<x>0.0</x>
@@ -250,6 +250,29 @@
 				<y>1.0</y>
 				<z>1.0</z>
 			</scale>
+			<gridDimension>4</gridDimension>
+			<gridWidth>1000</gridWidth>
+			<gridHeight>1000</gridHeight>
+		</object>
+
+		<object id="9">
+			<model>100</model>
+			<name>Skybox</name>
+			<type>skybox</type>
+			<scale>
+				<x>1000</x>
+				<y>1000</y>
+				<z>1000</z>
+			</scale>
+			<shader>2</shader>
+			<textures>
+				<texture id="6"/>
+			</textures>
+			<followingCamera>
+				<ox/>
+				<oz/>
+			</followingCamera>
+			<offsetY>0</offsetY>
 		</object>
 	</objects>
 	

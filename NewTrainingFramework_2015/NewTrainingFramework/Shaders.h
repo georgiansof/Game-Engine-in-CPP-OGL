@@ -1,7 +1,8 @@
 #pragma once
+#include <string>
 #include "../Utilities/utilities.h"
 
-class Shaders 
+class Shader
 {
 public:
 	GLuint program, vertexShader, fragmentShader;
@@ -11,16 +12,24 @@ public:
 	GLint colorAttribute;
 	GLint matrixUniform;
 	GLint cam_matrixUniform;
+	GLint Model_matrixUniform;
+	GLint View_matrixUniform;
+	GLint Perspective_matrixUniform;
 	GLint normalAttribute;
 	GLint binormalAttribute;
 	GLint tangentAttribute;
 	GLint uvAttribute;
 	GLint textureUniform;
+	GLint cubeTextureUniform;
 	GLint fogColorUniform;
 	GLint camPosition;
 	GLint smallRadius;
 	GLint bigRadius;
 
+
 	int Init(char * fileVertexShader, char * fileFragmentShader);
-	~Shaders();
+	int Init();
+	Shader();
+	Shader(std::string FSpath, std::string VSpath);
+	~Shader();
 };

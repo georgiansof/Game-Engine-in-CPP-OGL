@@ -1,6 +1,8 @@
 // NewTrainingFramework.cpp : Defines the entry point for the console application.
 /** 
 	ISSUES: wired?, fullscreen
+
+	skybox texture CUBEMAP??
 **/
 
 /***
@@ -32,8 +34,9 @@ HIGHLIGHTS:
 GLuint model_vboId;
 GLuint texture_vboId;
 GLuint indices_vboId;
-Shaders model_shader;
+Shader model_shader;
 
+Vector3 updCamPos,deltaPos;
 Camera *activeCamera;
 Matrix mPerspective;
 SceneManager* sceneManager;
@@ -44,14 +47,15 @@ float acumm;
 
 bool rotating = false;
 
-std::vector<ModelVertex> mdl;
-std::vector<Vector3_uhint> indices;
+//std::vector<ModelVertex> mdl;
+//std::vector<Vector3_uhint> indices;
 
-int Init(ESContext* esContext)
-{
+int Init(ESContext* esContext) {
 	Vector4 bgcolor = SceneManager::getInstance()->getBgColor();
 	glClearColor(bgcolor.x, bgcolor.y, bgcolor.z, 1.0f);
 	glEnable(GL_DEPTH_TEST);
+	/*
+	
 	glGenBuffers(1, &indices_vboId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_vboId);
 
@@ -79,10 +83,10 @@ int Init(ESContext* esContext)
 
 	glGenTextures(1, &texture_vboId);
 	glBindTexture(GL_TEXTURE_2D, texture_vboId);
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	int texture_width=0, texture_height=0, bpp=0;
@@ -95,20 +99,28 @@ int Init(ESContext* esContext)
 	delete mdl_data;
 
 	//creation of shaders and program 
-	int retmdl = model_shader.Init("../Resources/Shaders/ModelShaderVS.vs", "../Resources/Shaders/ModelShaderFS.fs");
+	int retmdl = model_shader.Init("Res/Shaders/modelShaderVS.vs", "Res/Shaders/modelShaderFS.fs");
 	int ret = !!retmdl;
-	return ret;
-
+	 */
+	for (auto& x : sceneManager->getAllSceneObjects()) {
+		
+		if (x.second->Init() != 0)
+			return -1;
+	}
+	/// TODO SceneObject Unload() , drawn at startup attribute
+	return 0;
 }
 
 void Draw ( ESContext *esContext )
 {
 	Matrix m_cam = activeCamera->get_viewMatrix();
-	Matrix mvp = m_cam * mPerspective;
+	Matrix vp = m_cam * mPerspective;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+	for (auto& x : sceneManager->getAllSceneObjects()) {
+		x.second->Draw(vp); /// TODO teren
+	}
 	////////
-	glUseProgram(model_shader.program);
+	/*glUseProgram(model_shader.program);
 	glBindBuffer(GL_ARRAY_BUFFER, model_vboId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_vboId);
 
@@ -164,7 +176,8 @@ void Draw ( ESContext *esContext )
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindTexture(GL_TEXTURE0, 0);
+	glBindTexture(GL_TEXTURE0, 0);*/
+	/// TODO draw selected elements
 	eglSwapBuffers ( esContext->eglDisplay, esContext->eglSurface );
 	
 }
@@ -293,11 +306,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	///DEBUG PARSARE MODEL
 
-	std::string model_folder = "..\\..\\NewResourcesPacket\\Models";
-	std::string model_file = "Croco.nfg";
+	//std::string model_folder = "..\\..\\NewResourcesPacket\\Models";
+	//std::string model_file = "Croco.nfg";
 
-	NFG_Parser::Parse(model_folder + "\\" + model_file, mdl, indices);
-
+	//NFG_Parser::Parse(model_folder + "\\" + model_file, mdl, indices);
 	ResourceManager::getInstance()->ParseXML("resourceManager.XML");
 	SceneManager::getInstance()->ParseXML("sceneManager.XML");
 	activeCamera = SceneManager::getInstance()->getActiveCamera();
@@ -310,6 +322,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		sceneManager->setActiveCamera(camptr);
 		activeCamera = camptr;
 	}
+	updCamPos = activeCamera->getPosition();
 
 	mPerspective = mPerspective.SetPerspective(activeCamera->get_fov(), (GLfloat)Globals::screenWidth / Globals::screenHeight, activeCamera->get_near(), activeCamera->get_far());
 
@@ -343,7 +356,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	if ( Init ( &esContext ) != 0 )
 		return 0;
-
 	esRegisterDrawFunc ( &esContext, Draw );
 	esRegisterUpdateFunc ( &esContext, Update );
 	esRegisterKeyFunc ( &esContext, Key);

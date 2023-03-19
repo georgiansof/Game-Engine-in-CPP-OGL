@@ -8,6 +8,9 @@
 			<model id="5">
 				<file>Bila.nfg</file>
 			</model>
+			<model id="100">
+				<file>SkyBox.nfg</file>
+			</model>
 		</folder>
 
 		<!-- un tag folder doar specifica folderul comun pentru un grup de modele (pot sa le am in mai multe foldere)
@@ -22,10 +25,22 @@
 	<shaders>
 		<folder path="Res/Shaders/">
 			<shader id="10">
-				<vs>modelShader.vs</vs>
-				<fs>modelShader.fs</fs>
+				<vs>crocoShader.vs</vs>
+				<fs>crocoShader.fs</fs>
+			</shader>
+			<shader id="11">
+				<vs>ballShader.vs</vs>
+				<fs>ballShader.fs</fs>
 			</shader>
 			<shader id="3">
+				<vs>terrainShader.vs</vs>
+				<fs>terrainShader.fs</fs>
+			</shader>
+			<shader id="2">
+				<vs>skyboxShader.vs</vs>
+				<fs>skyboxShader.fs</fs>
+			</shader>
+			<shader id="8">
 				<vs>terrainShader.vs</vs>
 				<fs>terrainShader.fs</fs>
 			</shader>
@@ -37,6 +52,13 @@
 		<folder path="Res/Textures/">
 			<texture id="4" type="2d">
 				<file>croco.tga</file>			
+				<min_filter>LINEAR</min_filter>
+				<mag_filter>LINEAR</mag_filter>
+				<wrap_s>CLAMP_TO_EDGE</wrap_s>
+				<wrap_t>CLAMP_TO_EDGE</wrap_t>
+			</texture>
+			<texture id="6" type="cube">
+				<file>envMap.tga</file>
 				<min_filter>LINEAR</min_filter>
 				<mag_filter>LINEAR</mag_filter>
 				<wrap_s>CLAMP_TO_EDGE</wrap_s>

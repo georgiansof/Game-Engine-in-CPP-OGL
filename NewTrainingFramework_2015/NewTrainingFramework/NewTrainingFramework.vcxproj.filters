@@ -67,23 +67,29 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Resources\Shaders\TriangleShaderFS.fs">
-      <Filter>Resources\Shaders</Filter>
-    </None>
-    <None Include="..\Resources\Shaders\TriangleShaderVS.vs">
-      <Filter>Resources\Shaders</Filter>
-    </None>
     <None Include="..\..\Readme.doc" />
-    <None Include="..\Resources\Shaders\WhitelineShaderFS.fs">
+    <None Include="Res\Shaders\crocoShader.fs">
       <Filter>Resources\Shaders</Filter>
     </None>
-    <None Include="..\Resources\Shaders\WhitelineShaderVS.vs">
+    <None Include="Res\Shaders\crocoShader.vs">
       <Filter>Resources\Shaders</Filter>
     </None>
-    <None Include="..\Resources\Shaders\ModelShaderFS.fs">
+    <None Include="Res\Shaders\ballShader.vs">
       <Filter>Resources\Shaders</Filter>
     </None>
-    <None Include="..\Resources\Shaders\ModelShaderVS.vs">
+    <None Include="Res\Shaders\ballShader.fs">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="Res\Shaders\skyboxShader.fs">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="Res\Shaders\skyboxShader.vs">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="Res\Shaders\terrainShader.vs">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="Res\Shaders\terrainShader.fs">
       <Filter>Resources\Shaders</Filter>
     </None>
   </ItemGroup>

@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include "Model.h"
 #include "Camera.h"
+#include "Shaders.h"
 
 /*class Singleton
 {
@@ -36,25 +37,25 @@ struct TextureResource {
 	int bpp;
 };
 
-struct ShaderResource {
-	std::string FragmentShader;
-	std::string VertexShader;
-};
+
+class SceneObject;
 
 class Model {
 private:
-	std::string path;
 	ModelResource* mr;
 	GLuint iboId;
 	GLuint wiredIboId;
 	GLuint vboId;
 	int nrIndices, nrIndicesWired;
+	bool generated;
 public:
+	std::string path;
 	int Load();
 	int Unload(); /// -1 la esec
 	Model();
 	Model(std::string path);
 	~Model();
+	friend SceneObject;
 };
 
 class Texture {
@@ -72,14 +73,14 @@ public:
 		CLAMP_TO_EDGE,
 		REPEAT,
 		MIRRORED_REPEAT,
-		CLAMP_TO_BORDER,
-		MIRROR_CLAMP_TO_EDGE,
 		UNSETW
 	};
 private:
+	GLenum type;
 	std::string path;
 	TextureResource* tr;
-	GLuint textureId;
+	GLuint glTextureId;
+	GLuint glCubeTextureId;
 	filtering_type min_filter, mag_filter;
 	wrapping_type wrap_s, wrap_t;
 public:
@@ -89,22 +90,9 @@ public:
 	std::string getTGA();
 	int getTextureId();
 	Texture();
-	Texture(int textureId, std::string path, filtering_type min_filter, filtering_type mag_filter, wrapping_type wrap_s, wrapping_type wrap_t);
+	Texture(int textureId, std::string path, filtering_type min_filter, filtering_type mag_filter, wrapping_type wrap_s, wrapping_type wrap_t, GLenum type);
 	~Texture();
-};
-
-class Shader {
-private:
-	ShaderResource* sr;
-	GLuint progId;
-	GLuint vsId, fsId;
-public:
-	Shader();
-	Shader(std::string FSpath, std::string VSpath);
-	int Load(std::string FSpath, std::string VSpath);
-	int Load();
-	int Unload(); /// vechiul progId la succes, -1 la esec
-	~Shader();
+	friend SceneObject;
 };
 
 class ResourceManager;
@@ -129,6 +117,8 @@ public:
 
 class SceneManager;
 
+class SkyBox;
+
 class SceneObject {
 private:
 	int id;
@@ -136,11 +126,14 @@ private:
 	std::vector<int> textureIds;
 	Model* model;
 	Shader* shader;
-	std::vector<Texture*> textures;
+	std::unordered_map<int, Texture*> textures;
 	bool depthTest;
 	bool wired;
 	bool generatedModel;
-	enum {NORMAL, TERRAIN} type;
+	enum objType {NORMAL, TERRAIN, SKYBOX} type;
+	unsigned short int grid_dimension;
+	unsigned short int grid_width, grid_height;
+protected:
 	SceneObject();
 public:
 	std::string name;
@@ -148,9 +141,24 @@ public:
 	Vector3 rotation;
 	Vector3 scale;
 	Vector3 color;
+	Vector3 followingCamera;
+	Model* getModel();
+	Shader* getShader();
+	std::unordered_map<int,Texture*>& getTextures();
+	void generateModel();
 	~SceneObject();
-	SceneObject(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, bool depthTest, int modelId, int ShaderId, std::vector<int>& textureIds);
+	SceneObject(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, bool depthTest, int modelId, int ShaderId, std::vector<int>& textureIds, objType type);
+	int Init();
+	int Draw(Matrix& vp);
 	friend SceneManager;
+	friend SkyBox;
+};
+
+class SkyBox : public SceneObject {
+public:
+	SkyBox(SceneObject* sobj, float offsetY);
+	SkyBox();
+	friend SceneObject;
 };
 
 class SceneManager {
@@ -213,6 +221,7 @@ public:
 	Camera* getActiveCamera();
 	int setActiveCamera(Camera* cam);
 	SceneObject* getSceneObject(int id);
+	std::unordered_map<int, SceneObject*>& getAllSceneObjects();
 	float getFogBigRadius();
 	float getFogSmallRadius();
 	int addCamera(int id, Camera* cam);

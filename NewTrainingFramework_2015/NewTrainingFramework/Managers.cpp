@@ -96,6 +96,17 @@ void ResourceManager::ParseNode(xml_node<>* pNode, string path) {
 					}
 					if (strcmp(_strlwr(p->name()), "texture") == 0) {
 						/// textura
+						GLenum type = GL_TEXTURE_2D;
+						for (xml_attribute<>* textattr = p->first_attribute(); textattr; textattr = textattr->next_attribute())
+							if (strcmp(_strlwr(textattr->name()), "type") == 0)
+								if (strcmp(_strlwr(textattr->value()), "2d") == 0)
+									type = GL_TEXTURE_2D;
+								else
+									if (strcmp(_strlwr(textattr->value()), "cube") == 0) {
+										type = GL_TEXTURE_CUBE_MAP;
+									}
+								
+
 						string filepath(child_path);
 						Texture::filtering_type min_filter = Texture::UNSETF, mag_filter = Texture::UNSETF;
 						Texture::wrapping_type wrap_s = Texture::UNSETW, wrap_t = Texture::UNSETW;
@@ -180,9 +191,7 @@ void ResourceManager::ParseNode(xml_node<>* pNode, string path) {
 											int i = 0;
 											vector<string> tmp({ "CLAMP_TO_EDGE",
 																 "REPEAT",
-														 		 "MIRRORED_REPEAT",
-																 "CLAMP_TO_BORDER",
-																 "MIRROR_CLAMP_TO_EDGE" });
+														 		 "MIRRORED_REPEAT" });
 											for (auto x : tmp) {
 												if (strcmp(_strupr(pt->value()), x.c_str()) == 0) {
 													switch (i) {
@@ -194,12 +203,6 @@ void ResourceManager::ParseNode(xml_node<>* pNode, string path) {
 														break;
 													case 2:
 														wrap_s = Texture::MIRRORED_REPEAT;
-														break;
-													case 3:
-														wrap_s = Texture::CLAMP_TO_BORDER;
-														break;
-													case 4:
-														wrap_s = Texture::MIRROR_CLAMP_TO_EDGE;
 														break;
 													}
 													break;
@@ -227,12 +230,6 @@ void ResourceManager::ParseNode(xml_node<>* pNode, string path) {
 														case 2:
 															wrap_t = Texture::MIRRORED_REPEAT;
 															break;
-														case 3:
-															wrap_t = Texture::CLAMP_TO_BORDER;
-															break;
-														case 4:
-															wrap_t = Texture::MIRROR_CLAMP_TO_EDGE;
-															break;
 														}
 														break;
 													}
@@ -240,7 +237,7 @@ void ResourceManager::ParseNode(xml_node<>* pNode, string path) {
 												}
 											}
 						int id = atoi(attr->value());
-;						this->textures.insert(make_pair(id, new Texture(id,filepath, min_filter, mag_filter, wrap_s, wrap_t)));
+;						this->textures.insert(make_pair(id, new Texture(id,filepath, min_filter, mag_filter, wrap_s, wrap_t,type)));
 					}
 					if (strcmp(_strlwr(p->name()), "shader") == 0) {
 						/// shader
@@ -283,21 +280,18 @@ Shader* ResourceManager::getShader(int id) {
 }
 
 int Model::Load() {
-	if (path.length() == 0) {
+	if (!generated && path.length() == 0) {
 		cout << "Model path length is zero!\n";
 		return -1;
 	}
-	if (mr) {
-		mr->indices.clear();
-		mr->vertices.clear();
-	}
-	else 
+	if (mr)
+		return 0;
+	if (!generated) {
 		mr = new ModelResource;
-	NFG_Parser::Parse(path, mr->vertices, mr->indices);
-	nrIndices = mr->indices.size();
-	///nrIndicesWired = ??? 
-	if(iboId == -1) glGenBuffers(1, &iboId);
-	if(vboId == -1) glGenBuffers(1, &vboId);
+		NFG_Parser::Parse(path, mr->vertices, mr->indices);
+		nrIndices = mr->indices.size();
+		///nrIndicesWired = ???
+	}
 	return 0;
 }
 
@@ -324,6 +318,7 @@ Model::Model() {
 	vboId = -1;
 	nrIndices = -1;
 	nrIndicesWired = -1;
+	generated = false;
 }
 
 Model::Model(string path) {
@@ -334,13 +329,14 @@ Model::Model(string path) {
 	nrIndices = -1;
 	nrIndicesWired = -1;
 	this->path.assign(path.c_str());
+	generated = false;
 }
 
 Model::~Model() {
 	this->Unload();
 }
 
-int Texture::getTextureId() { return textureId; }
+int Texture::getTextureId() { return glTextureId; }
 
 int Texture::Load() {
 	if (tr)
@@ -351,9 +347,6 @@ int Texture::Load() {
 		delete tr;
 		return -1;
 	}
-	if(textureId == -1) 
-		glGenTextures(1, &textureId);
-
 	return 0;
 }
 
@@ -374,109 +367,49 @@ int Texture::Unload() {
 		delete tr;
 		return 0;
 	}
-	if (textureId != -1)
-		glDeleteTextures(1, &textureId);
-	textureId = -1;
+	glTextureId = -1;
 	return -1;
 }
 Texture::Texture() {
 	tr = NULL;
-
-	textureId = -1;
+	type = GL_TEXTURE_2D;
+	glTextureId = -1;
 	this->min_filter = Texture::UNSETF;
 	this->mag_filter = Texture::UNSETF;
 	this->wrap_s = Texture::UNSETW;
 	this->wrap_t = Texture::UNSETW;
 }
-Texture::Texture(int textureId, std::string path, Texture::filtering_type min_filter, Texture::filtering_type mag_filter, Texture::wrapping_type wrap_s, Texture::wrapping_type wrap_t) {
+Texture::Texture(int textureId, std::string path, Texture::filtering_type min_filter, Texture::filtering_type mag_filter, Texture::wrapping_type wrap_s, Texture::wrapping_type wrap_t, GLenum type) {
 	tr = NULL;
-	this->textureId = textureId;
+	this->type = type;
+	this->glTextureId = textureId;
 	this->path.assign(path.c_str());
 	this->min_filter=min_filter;
 	this->mag_filter=mag_filter;
 	this->wrap_s=wrap_s;
 	this->wrap_t=wrap_t;
+	this->type = type;
 }
 Texture::~Texture() {
 	this->Unload();
 }
 
-Shader::Shader() {
-	sr = NULL;
-	progId = -1;
-	vsId = -1;
-	fsId = -1;
+SceneObject::SceneObject() {
+	position = Vector3(0, 0, 0);
+	rotation = Vector3(0, 0, 0);
+	scale = Vector3(1, 1, 1);
+	grid_dimension = 4;
+	grid_width = grid_height = 50;
 }
-
-Shader::Shader(string FSpath, string VSpath) {
-	progId = -1;
-	vsId = -1;
-	fsId = -1;
-	sr = new ShaderResource;
-	sr->FragmentShader = FSpath;
-	sr->VertexShader = VSpath;
-}
-
-int Shader::Load(string FSpath, string VSpath) {
-	if (!sr)
-		sr = new ShaderResource;
-	sr->FragmentShader = FSpath;
-	sr->VertexShader = VSpath;
-	return Load();
-}
-
-int Shader::Load() {
-	if (!sr) {
-		cout << "Error due trial to load a shader with no VS & FS path specified";
-		return -1;
-	}
-
-	vsId = esLoadShader(GL_VERTEX_SHADER,(char*) sr->VertexShader.c_str());
-	if (vsId == 0) {
-		vsId = -1;
-		cout << "Failed to load Vertex Shader\n";
-		return -1;
-	}
-	fsId = esLoadShader(GL_FRAGMENT_SHADER,(char*) sr->FragmentShader.c_str());
-	if (fsId == 0) {
-		fsId = -1;
-		glDeleteShader(vsId);
-		vsId = -1;
-		cout << "Failed to load Fragment Shader\n";
-		return -1;
-	}
-	progId = esLoadProgram(vsId, fsId);
-	return 0;
-}
-
-int Shader::Unload() {
-	if (sr != NULL)
-		delete sr;
-	int x = progId;
-	progId = -1;
-
-	if (vsId != -1)
-		glDeleteShader(vsId);
-	if (fsId != -1)
-		glDeleteShader(fsId);
-	if (progId != -1)
-		glDeleteProgram(progId);
-	return x;
-}
-
-Shader::~Shader() {
-	Unload();
-}
-
-SceneObject::SceneObject() {}
 
 SceneObject::~SceneObject() {
 	textures.clear();
 	textureIds.clear();
 }
 
-SceneObject::SceneObject(string name, Vector3 position, Vector3 rotation, Vector3 scale, bool depthTest, int modelId, int ShaderId, vector<int> &textureIds) {
+SceneObject::SceneObject(string name, Vector3 position, Vector3 rotation, Vector3 scale, bool depthTest, int modelId, int ShaderId, vector<int> &textureIds,SceneObject::objType type) {
 	this->name = name;
+	this->type = type;
 	this->position = position;
 	this->rotation = rotation;
 	this->scale = scale;
@@ -487,7 +420,7 @@ SceneObject::SceneObject(string name, Vector3 position, Vector3 rotation, Vector
 	this->shader = ResourceManager::getInstance()->getShader(shaderId);
 	for (auto& x : textureIds) {
 		this->textureIds.push_back(x);
-		textures.push_back(ResourceManager::getInstance()->getTexture(x));
+		textures.insert(make_pair(x,ResourceManager::getInstance()->getTexture(x)));
 	}
 }
 
@@ -819,6 +752,9 @@ void SceneManager::ParseNode(xml_node<>* pNode, string additive_relative_path) {
 											SceneObject *objptr = new SceneObject;
 											objptr->depthTest = false;
 											objptr->wired = false;
+
+											float verticalOffset = 0;
+
 											for(xml_attribute<> *atr = q->first_attribute(); atr; atr = atr->next_attribute())
 												if (strcmp(_strlwr(atr->name()), "id") == 0) {
 													objptr->id = atoi(atr->value());
@@ -830,7 +766,7 @@ void SceneManager::ParseNode(xml_node<>* pNode, string additive_relative_path) {
 												if (strcmp(_strlwr(r->name()), "model") == 0) {
 													if (strcmp(_strlwr(r->value()), "generated") == 0) {
 														objptr->modelId = -1;
-														objptr->model = nullptr;
+														objptr->model = new Model;
 														objptr->generatedModel = true;
 													}
 													else {
@@ -854,9 +790,10 @@ void SceneManager::ParseNode(xml_node<>* pNode, string additive_relative_path) {
 																		for (xml_attribute <>* attr = txt->first_attribute(); attr; attr = attr->next_attribute())
 																			if (strcmp(_strlwr(attr->name()), "id") == 0) {
 																				objptr->textureIds.push_back(atoi(attr->value()));
-																				objptr->textures.push_back(ResourceManager::getInstance()->getTexture(atoi(attr->value())));
+																				objptr->textures.insert(make_pair(atoi(attr->value()), ResourceManager::getInstance()->getTexture(atoi(attr->value()))));
 																				break;
 																			}
+																			
 															}
 															else
 																if (strcmp(_strlwr(r->name()), "position") == 0)
@@ -921,11 +858,49 @@ void SceneManager::ParseNode(xml_node<>* pNode, string additive_relative_path) {
 																							if (strcmp(_strlwr(r->value()), "terrain") == 0)
 																								objptr->type = SceneObject::TERRAIN;
 																							else
-																								;
+																								if (strcmp(_strlwr(r->value()), "skybox") == 0)
+																									objptr->type = SceneObject::SKYBOX;
+																								else
+																									;
 																					else
-																						;
-											
-											this->sceneObjects.insert(make_pair(objptr->id, objptr));
+																						if(strcmp(_strlwr(r->name()), "offsety") == 0)
+																							verticalOffset = atof(r->value());
+																						else
+																							if (strcmp(_strlwr(r->name()), "followingcamera") == 0) {
+																								for (xml_node<>* z = r->first_node(); z; z = z->next_sibling())
+																									if (strcmp(_strlwr(z->name()), "ox") == 0)
+																										objptr->followingCamera.x = 1;
+																									else
+																										if (strcmp(_strlwr(z->name()), "oy") == 0)
+																											objptr->followingCamera.y = 1;
+																										else
+																											if (strcmp(_strlwr(z->name()), "oz") == 0)
+																												objptr->followingCamera.z = 1;
+																											else
+																												;
+																							}
+																							else
+																								if(strcmp(_strlwr(r->name()), "griddimension") == 0)
+																									objptr->grid_dimension = atof(r->value());
+																								else
+																									if(strcmp(_strlwr(r->name()), "gridwidth") == 0 )
+																										objptr->grid_width = atof(r->value());
+																									else
+																										if(strcmp(_strlwr(r->name()), "gridheight") == 0)
+																											objptr->grid_height = atof(r->value());
+																										else
+																											;
+											if(objptr->type == SceneObject::SKYBOX) {
+												SkyBox *sb = new SkyBox(objptr, verticalOffset);
+												sb->depthTest = true;
+												this->sceneObjects.insert(make_pair(sb->id, (SceneObject*)sb));
+												delete objptr;
+											}
+											else {
+												if (objptr->type == SceneObject::TERRAIN)
+													objptr->generateModel();
+												this->sceneObjects.insert(make_pair(objptr->id, objptr));
+											}
 										}
 									
 								}
@@ -1135,4 +1110,424 @@ float SceneManager::getFogBigRadius() {
 
 float SceneManager::getFogSmallRadius() {
 	return this->fog.smallRadius;
+}
+
+unordered_map<int, SceneObject*>& SceneManager::getAllSceneObjects() {
+	return this->sceneObjects;
+}
+
+Model* SceneObject::getModel() {
+	return this->model;
+}
+
+Shader* SceneObject::getShader() {
+	return this->shader;
+}
+
+std::unordered_map<int,Texture*>& SceneObject::getTextures() {
+	return this->textures;
+}
+
+int SceneObject::Init() {
+/// model
+	glEnable(GL_DEPTH_TEST);
+	this->model->Load();
+	/// indices
+	glGenBuffers(1, &this->model->iboId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->model->iboId);
+	    
+		/// convert to memory block
+	int n = this->model->mr->indices.size();
+	
+	Vector3_uhint* indices_data = new Vector3_uhint[n];
+	for (int i = 0; i < n; ++i)
+		indices_data[i] = this->model->mr->indices[i];
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, n * sizeof(Vector3_uhint), indices_data, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	delete[] indices_data;
+	/// vertices
+	glGenBuffers(1, &this->model->vboId);
+	glBindBuffer(GL_ARRAY_BUFFER, this->model->vboId);
+		
+		/// convert to memory block
+	n = this->model->mr->vertices.size();
+	ModelVertex* vertices_data = new ModelVertex[n];
+	for (int i = 0; i < n; ++i) {
+		vertices_data[i] = this->model->mr->vertices[i];
+		/*vertices_data[i].pos.x = (vertices_data[i].pos.x + this->position.x) * this->scale.x;
+		vertices_data[i].pos.y = (vertices_data[i].pos.y + this->position.y) * this->scale.y;
+		vertices_data[i].pos.z = (vertices_data[i].pos.z + this->position.z) * this->scale.z;*/
+	}
+
+	glBufferData(GL_ARRAY_BUFFER, n * sizeof(ModelVertex), vertices_data, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	delete[] vertices_data;
+/// textures
+	int i = 0;
+	if(this->type != SceneObject::TERRAIN)
+		for (auto& txt : this->textures) {
+			if (txt.second->type == GL_TEXTURE_2D) {
+				glGenTextures(1, &txt.second->glTextureId);
+				glBindTexture(GL_TEXTURE_2D, txt.second->glTextureId);
+
+				switch (txt.second->min_filter) {
+				case Texture::LINEAR:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+					break;
+				case Texture::NEAREST:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+					break;
+				case Texture::NEAREST_MIPMAP_NEAREST:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+					break;
+				case Texture::LINEAR_MIPMAP_NEAREST:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+					break;
+				case Texture::NEAREST_MIPMAP_LINEAR:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+					break;
+				case Texture::LINEAR_MIPMAP_LINEAR:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+					break;
+				}
+				switch (txt.second->mag_filter) {
+				case Texture::LINEAR:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+					break;
+				case Texture::NEAREST:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+					break;
+				case Texture::NEAREST_MIPMAP_NEAREST:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+					break;
+				case Texture::LINEAR_MIPMAP_NEAREST:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+					break;
+				case Texture::NEAREST_MIPMAP_LINEAR:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+					break;
+				case Texture::LINEAR_MIPMAP_LINEAR:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+					break;
+				}
+				switch (txt.second->wrap_s) {
+				case Texture::CLAMP_TO_EDGE:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+					break;
+				case Texture::REPEAT:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+					break;
+				case Texture::MIRRORED_REPEAT:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+					break;
+				}
+				switch (txt.second->wrap_t) {
+				case Texture::CLAMP_TO_EDGE:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+					break;
+				case Texture::REPEAT:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+					break;
+				case Texture::MIRRORED_REPEAT:
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+					break;
+				}
+				txt.second->Load();
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, txt.second->tr->texture_width, txt.second->tr->texture_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, txt.second->tr->pixel_array);
+				glActiveTexture(GL_TEXTURE0 + i);
+				glBindTexture(GL_TEXTURE0 + i, 0);
+			}
+			else 
+				if (txt.second->type == GL_TEXTURE_CUBE_MAP) {
+					glGenTextures(1, &txt.second->glCubeTextureId);
+					glBindTexture(GL_TEXTURE_CUBE_MAP, txt.second->glCubeTextureId);
+					switch (txt.second->min_filter) {
+					case Texture::LINEAR:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+						break;
+					case Texture::NEAREST:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+						break;
+					case Texture::NEAREST_MIPMAP_NEAREST:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+						break;
+					case Texture::LINEAR_MIPMAP_NEAREST:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+						break;
+					case Texture::NEAREST_MIPMAP_LINEAR:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+						break;
+					case Texture::LINEAR_MIPMAP_LINEAR:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+						break;
+					}
+					switch (txt.second->mag_filter) {
+					case Texture::LINEAR:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+						break;
+					case Texture::NEAREST:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+						break;
+					case Texture::NEAREST_MIPMAP_NEAREST:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+						break;
+					case Texture::LINEAR_MIPMAP_NEAREST:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+						break;
+					case Texture::NEAREST_MIPMAP_LINEAR:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+						break;
+					case Texture::LINEAR_MIPMAP_LINEAR:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+						break;
+					}
+					switch (txt.second->wrap_s) {
+					case Texture::CLAMP_TO_EDGE:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+						break;
+					case Texture::REPEAT:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT);
+						break;
+					case Texture::MIRRORED_REPEAT:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+						break;
+					}
+					switch (txt.second->wrap_t) {
+					case Texture::CLAMP_TO_EDGE:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+						break;
+					case Texture::REPEAT:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT);
+						break;
+					case Texture::MIRRORED_REPEAT:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+						break;
+					}
+					for (int j = 0; j < 6; ++j) {
+						txt.second->Load();
+
+						int bpp = txt.second->tr->bpp;
+						int H = txt.second->tr->texture_height;
+						int W = txt.second->tr->texture_width * (bpp / 8);
+						unsigned char* px_array = txt.second->tr->pixel_array;
+
+						int targetH_start,targetH_end, targetW_start, targetW_end;
+					
+						switch (j) {
+						case 0:
+							targetH_start = H / 3;
+							targetH_end = 2 * H / 3;
+
+							targetW_start = 2 * W / 4;
+							targetW_end = 3 * W / 4;
+							break;
+						case 1:
+							targetH_start = H / 3;
+							targetH_end = 2 * H / 3;
+
+							targetW_start = 0;
+							targetW_end = W / 4;
+							break;
+						case 2:
+							targetH_start = 0;
+							targetH_end = H / 3;
+
+							targetW_start = W / 4;
+							targetW_end = W / 2;
+							break;
+						case 3:
+							targetH_start = 2 * H / 3;
+							targetH_end = H;
+
+							targetW_start = W / 4;
+							targetW_end =  W / 2;
+							break;
+						case 4:
+							targetH_start = H / 3;
+							targetH_end = 2 * H / 3;
+
+							targetW_start = W / 4;
+							targetW_end = W / 2;
+							break;
+						case 5:
+							targetH_start = H / 3;
+							targetH_end = 2 * H / 3;
+
+							targetW_start = 3 * W / 4;
+							targetW_end = W;
+							break;
+						}
+
+						unsigned char* trimmed_array = new unsigned char[(bpp/8) * (H/3 + 1) * (W/4+1)];
+						int k = 0;
+						for (int z = targetH_start; z <= targetH_end; ++z)
+							for (int j = targetW_start; j <= targetW_end; ++j)
+								trimmed_array[k++] = px_array[W * z + j];
+
+						glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, 0, GL_RGBA, txt.second->tr->texture_width / 4, txt.second->tr->texture_height / 3, 0, GL_RGBA, GL_UNSIGNED_BYTE, trimmed_array);
+
+						delete[] trimmed_array;
+					}
+					glActiveTexture(GL_TEXTURE_CUBE_MAP);
+					glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+				}
+			++i;
+		}
+
+/// shader
+	if (this->shader->Init() != 0)
+		return -1;
+	return 0;
+}
+
+int SceneObject::Draw(Matrix &vp) {
+	Matrix modelMatrix, translate, scale, rotateX, rotateY, rotateZ, MVP;
+	translate.SetTranslation(this->position);
+
+	scale.SetScale(this->scale);
+	rotateX.SetRotationX(this->rotation.x);
+	rotateY.SetRotationY(this->rotation.y);
+	rotateZ.SetRotationZ(this->rotation.z);
+	
+	modelMatrix = rotateZ * rotateY * rotateX * scale * translate;
+
+	MVP = modelMatrix * vp;
+	glUseProgram(this->shader->program);
+	glBindBuffer(GL_ARRAY_BUFFER, this->model->vboId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->model->iboId);
+
+	int i = 0;
+	for (auto& x : this->textures)
+		if(x.second->type==GL_TEXTURE_2D)
+			glBindTexture(GL_TEXTURE0 + i++, x.second->glTextureId);
+		else
+			if (x.second->type == GL_TEXTURE_CUBE_MAP) 
+				glBindTexture(GL_TEXTURE_CUBE_MAP, x.second->glCubeTextureId);
+
+	if (this->shader->positionAttribute != -1) {
+		glEnableVertexAttribArray(this->shader->positionAttribute);
+		glVertexAttribPointer(this->shader->positionAttribute, 3, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), 0);
+	}
+	if (this->shader->colorAttribute != -1) {
+		glEnableVertexAttribArray(this->shader->colorAttribute);
+		glVertexAttribPointer(this->shader->colorAttribute, 3, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), (GLvoid*)sizeof(Vector3));
+	}
+	if (this->shader->cam_matrixUniform != -1) {
+		glUniformMatrix4fv(this->shader->cam_matrixUniform, 1, GL_FALSE, (GLfloat*)MVP.m);
+	}
+	if (this->shader->normalAttribute != -1) {
+		glEnableVertexAttribArray(this->shader->normalAttribute);
+		glVertexAttribPointer(this->shader->normalAttribute, 3, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), (GLvoid*)(2 * sizeof(Vector3)));
+	}
+	if (this->shader->binormalAttribute != -1) {
+		glEnableVertexAttribArray(this->shader->binormalAttribute);
+		glVertexAttribPointer(this->shader->binormalAttribute, 3, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), (GLvoid*)(3 * sizeof(Vector3)));
+	}
+	if (this->shader->tangentAttribute != -1) {
+		glEnableVertexAttribArray(this->shader->tangentAttribute);
+		glVertexAttribPointer(this->shader->tangentAttribute, 3, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), (GLvoid*)(4 * sizeof(Vector3)));
+	}
+	if (this->shader->uvAttribute != -1) {
+		glEnableVertexAttribArray(this->shader->uvAttribute);
+		glVertexAttribPointer(this->shader->uvAttribute, 2, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), (GLvoid*)(5 * sizeof(Vector3)));
+	}
+	if (this->shader->textureUniform != -1)
+		glUniform1i(this->shader->textureUniform, 0);
+	if (this->shader->cubeTextureUniform != -1)
+		glUniform1i(this->shader->cubeTextureUniform, 0); /// ?
+
+	if (this->shader->fogColorUniform != -1) {
+		Vector3 fogColor = SceneManager::getInstance()->getFogColor();
+		glUniform3f(this->shader->fogColorUniform, (GLfloat)fogColor.x, (GLfloat)fogColor.y, (GLfloat)fogColor.z);
+	}
+
+	if (this->shader->camPosition != -1) {
+		Vector3 campos = SceneManager::getInstance()->getActiveCamera()->getPosition();
+		glUniform3f(this->shader->camPosition, (GLfloat)campos.x, (GLfloat)campos.y, (GLfloat)campos.z);
+	}
+
+	if (this->shader->smallRadius != -1)
+		glUniform1f(this->shader->smallRadius, SceneManager::getInstance()->getFogSmallRadius());
+
+	if (this->shader->bigRadius != -1)
+		glUniform1f(this->shader->bigRadius, SceneManager::getInstance()->getFogBigRadius());
+
+	glDrawElements(GL_TRIANGLES, 3 * this->model->mr->indices.size(), GL_UNSIGNED_SHORT, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	for(--i ; i>=0; --i)
+		glBindTexture(GL_TEXTURE0, 0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	return 0;
+}
+
+SkyBox::SkyBox() : SceneObject() {
+}
+
+SkyBox::SkyBox(SceneObject* sobj, float offsetY) {
+	this->id = sobj->id;
+	this->modelId = sobj->modelId;
+	this->shaderId = sobj->shaderId;
+	this->textureIds = sobj->textureIds;
+	this->model = sobj->model;
+	this->shader = sobj->shader;
+	this->textures = sobj->textures;
+	this->depthTest = sobj->depthTest;
+	this->wired = sobj->wired;
+	this->generatedModel = sobj->generatedModel;
+	this->type = sobj->type;
+	this->name = sobj->name;
+	this->position = sobj->position;
+	this->rotation = sobj->rotation;
+	this->scale = sobj->scale;
+	this->color = sobj->color;
+	this->followingCamera = sobj->followingCamera;
+
+	this->position.x = 0;
+	this->position.z = 0;
+	this->position.y = offsetY;
+}
+
+void SceneObject::generateModel() {
+	if (this->type = SceneObject::TERRAIN) {
+		this->generatedModel = true;
+		this->model = new Model;
+		this->model->generated = true;
+		this->model->mr = new ModelResource;
+		ModelResource* mdlres = this->model->mr;
+		
+		/// generate indices & vertices
+		ModelVertex vertex;
+		int square_width = grid_width / grid_dimension;
+		int square_height = grid_height / grid_dimension;
+		vertex.tgt = Vector3(0, 0, 0);
+		vertex.binorm = Vector3(0, 1, 0);
+		vertex.norm = Vector3(0, 1, 0);
+		for (int i = 0; i <= grid_dimension; ++i)
+			for (int j = 0; j <= grid_dimension; ++j) {
+				vertex.uv.x = j * square_width;
+				vertex.uv.y = i * square_height;
+				float scale = vertex.uv.Length();
+				vertex.uv = vertex.uv.Normalize();
+				vertex.pos.x = vertex.uv.x * scale - (float)grid_width / 2;
+				vertex.pos.z = vertex.uv.y * scale  - (float)grid_height / 2;
+				mdlres->vertices.push_back(vertex);
+			}
+		for (unsigned short int i = 0; i < grid_dimension; ++i)
+			for (unsigned short int j = 0; j < grid_dimension; ++j) {
+				Vector3_uhint vec;
+				vec.x = i * (grid_dimension + 1) + j;
+				vec.y = i * (grid_dimension + 1) + j + 1;
+				vec.z = (i+1) * (grid_dimension + 1) + j;
+				mdlres->indices.push_back(vec);
+
+				vec.x = (i + 1) * (grid_dimension + 1) + j;
+				vec.y = (i + 1) * (grid_dimension + 1) + j + 1;
+				vec.z = i * (grid_dimension + 1) + j + 1;
+				mdlres->indices.push_back(vec);
+			}
+		std::cout << "A\n";
+	}
 }

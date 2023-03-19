@@ -185,13 +185,15 @@
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Resources\Shaders\ModelShaderFS.fs" />
-    <None Include="..\Resources\Shaders\ModelShaderVS.vs" />
-    <None Include="..\Resources\Shaders\TriangleShaderFS.fs" />
-    <None Include="..\Resources\Shaders\TriangleShaderVS.vs" />
     <None Include="..\..\Readme.doc" />
-    <None Include="..\Resources\Shaders\WhitelineShaderFS.fs" />
-    <None Include="..\Resources\Shaders\WhitelineShaderVS.vs" />
+    <None Include="Res\Shaders\ballShader.fs" />
+    <None Include="Res\Shaders\ballShader.vs" />
+    <None Include="Res\Shaders\crocoShader.fs" />
+    <None Include="Res\Shaders\crocoShader.vs" />
+    <None Include="Res\Shaders\skyboxShader.fs" />
+    <None Include="Res\Shaders\skyboxShader.vs" />
+    <None Include="Res\Shaders\terrainShader.fs" />
+    <None Include="Res\Shaders\terrainShader.vs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Utilities\Utilities.vcxproj">

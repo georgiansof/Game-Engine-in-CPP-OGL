@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "../Utilities/utilities.h"
 #include "Camera.h"
+#include "Managers.h"
 #include <iostream>
 
 void Camera :: setWorldMatrix(Matrix worldMatrix) {this->worldMatrix = worldMatrix;}
@@ -40,6 +41,12 @@ void Camera :: moveOx(int dir) {
 	deplasare = forward * moveSpeed * deltaTime;
 	position += deplasare;
 	target += deplasare;
+	/// sticky objects, e.g. skybox
+	for (auto& obj : SceneManager::getInstance()->getAllSceneObjects()) {
+		if (obj.second->followingCamera.x) {
+			obj.second->position += deplasare;
+		}
+	}
 	updateWorldView();
 }
 
@@ -49,15 +56,22 @@ void Camera::moveOy(int dir) {
 	deplasare = forward * moveSpeed * deltaTime;
 	position += deplasare;
 	target += deplasare;
+	for (auto& obj : SceneManager::getInstance()->getAllSceneObjects())
+		if (obj.second->followingCamera.y)
+			obj.second->position += deplasare;
 	updateWorldView();
 }
 
 void Camera::moveOz(int dir) {
 	Vector3 forward, deplasare;
-	forward = - zAxis * dir;
+	forward = -zAxis * dir;
 	deplasare = forward * moveSpeed * deltaTime;
 	position += deplasare;
 	target += deplasare;
+	for (auto& obj : SceneManager::getInstance()->getAllSceneObjects())
+		if (obj.second->followingCamera.z) {
+			obj.second->position += deplasare;
+		}
 	updateWorldView();
 }
 
