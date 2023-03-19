@@ -10,3 +10,17 @@ NewTrainingFramework_2015/.vs/NewTrainingFramework/v17/.suo
 *.idb
 *.pdb
 *.exe
+*.suo
+*.db
+*.ipch
+*.tlog
+*.log
+*.idb
+*.pdb
+*.filters
+*.vcxproj
+*.lastbuildstate
+*.recipe
+*.pch
+*.obj
+*
