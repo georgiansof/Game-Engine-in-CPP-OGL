@@ -40,10 +40,15 @@ Vector3 updCamPos,deltaPos;
 Camera *activeCamera;
 Matrix mPerspective;
 SceneManager* sceneManager;
+SceneObject* terrain;
+
+Vector3 lastCamPos;
+
 unsigned char* pixels_array;
 
 float prag=0.016f; /// 60 fps
 float acumm;
+float dx, dz;
 
 bool rotating = false;
 
@@ -117,7 +122,7 @@ void Draw ( ESContext *esContext )
 	Matrix vp = m_cam * mPerspective;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	for (auto& x : sceneManager->getAllSceneObjects()) {
-		x.second->Draw(vp); /// TODO teren
+		x.second->Draw(vp);
 	}
 	////////
 	/*glUseProgram(model_shader.program);
@@ -182,6 +187,30 @@ void Draw ( ESContext *esContext )
 	
 }
 
+void UpdateTerrain(float dx, float dz) {
+	if (abs(dz) > terrain->getGridHeight() / terrain->getGridDimension()) {
+		/// relativ la pozitia initiala a camerei
+		ModelResource* tmdlres = terrain->getModel()->getResource();
+		for (int i = 0; i < tmdlres->vertices.size(); ++i)
+			//if (dz > 0)
+			if(!terrain->isOnDebug())
+				tmdlres->vertices[i].pos.z += dz;//terrain->getGridHeight() / terrain->getGridDimension();
+			//else
+			//	tmdlres->vertices[i].pos.z -= dz;//terrain->getGridHeight() / terrain->getGridDimension();
+	}
+	if (abs(dx) > terrain->getGridWidth() / terrain->getGridDimension()) {
+		/// relativ la pozitia initiala a camerei
+		ModelResource* tmdlres = terrain->getModel()->getResource();
+		for (int i = 0; i < tmdlres->vertices.size(); ++i)
+			//if (dx > 0)
+			if(!terrain->isOnDebug())
+				tmdlres->vertices[i].pos.x += dx; //terrain->getGridWidth() / terrain->getGridDimension();
+			//else
+			//	tmdlres->vertices[i].pos.x -= dx; //terrain->getGridWidth() / terrain->getGridDimension();
+	}
+	terrain->Init();
+}
+
 void Update ( ESContext *esContext, float deltaTime )
 {
 	acumm += deltaTime;
@@ -196,6 +225,15 @@ void Update ( ESContext *esContext, float deltaTime )
 		/// render
 		//activeCamera->rotateOy(1);
 	}
+	if (terrain != nullptr && (abs(dx) > terrain->getGridWidth() / terrain->getGridDimension() || abs(dz) > terrain->getGridHeight() / terrain->getGridDimension())) {
+		UpdateTerrain(dx,dz);
+		dx = 0;
+		dz = 0;
+	}
+	Vector3 currentCamPos = activeCamera->getPosition();
+	dx += currentCamPos.x - lastCamPos.x;
+	dz += currentCamPos.z - lastCamPos.z;
+	lastCamPos = currentCamPos;
 }
 
 void MouseEvent(ESContext* esContext, MouseButton button, MouseEventType eventType, float mouseX, float mouseY) {		
@@ -323,7 +361,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		activeCamera = camptr;
 	}
 	updCamPos = activeCamera->getPosition();
-
+	lastCamPos = activeCamera->getPosition();
+	terrain = sceneManager->getSceneObjectByType(SceneObject::TERRAIN);
 	mPerspective = mPerspective.SetPerspective(activeCamera->get_fov(), (GLfloat)Globals::screenWidth / Globals::screenHeight, activeCamera->get_near(), activeCamera->get_far());
 
 	std::vector<SceneManager::action> zactions = SceneManager::getInstance()->getActionsFromKey('Z');

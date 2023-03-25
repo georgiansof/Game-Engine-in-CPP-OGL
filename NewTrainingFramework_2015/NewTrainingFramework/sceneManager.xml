@@ -140,9 +140,57 @@
 				<z>100</z>
 			</position>
 			<rotation>
-				<x>0.5</x>
-				<y>1.4</y>
-				<z>1</z>
+				<x>68</x>
+				<y>35</y>
+				<z>102</z>
+			</rotation>
+			<scale>
+				<x>1.0</x>
+				<y>1.0</y>
+				<z>1.0</z>
+			</scale>
+			<!--
+			Exemple de alte configurari care vor fi adaugate si parsate mai tarziu (pentru taskuri ulterioare)
+			<followingCamera>
+				<cameras>
+					<camera>1</camera>
+				</cameras>
+				<ox/>
+				<oy/>
+				<oz/>
+			</followingCamera>
+			<trajectory type="linear" iteration="infinite" direction="alternate">
+				<comment>startPoint e chiar Pos</comment>
+				<endPoint>
+					<x>0.5</x>
+					<y>100.0</y>
+					<z>1.0</z>				
+				</endPoint>
+				<speed>0.1</speed>
+			</trajectory>
+			<lights>
+				<light>1</light>
+			</lights>
+			-->
+		</object>
+		<object id="2">
+			
+			<model>1</model>
+			<shader>10</shader>
+			<type>normal</type>
+			<name>Crocodil_verde</name>
+			<textures>
+				<texture id="4"/>
+			</textures>
+			<position>
+				<x>-100</x>
+				<y>27</y>
+				<z>-100</z>
+			</position>
+			<rotation>
+				<x>360</x>
+				<y>360</y>
+				<z>360</z>
 			</rotation>
 			<scale>
 				<x>1.0</x>
@@ -233,6 +281,7 @@
 			<textures>
 				<texture id="14"/>
 				<texture id="15"/>
+				<texture id="77"/> 
 				<!-- TO DO adaugati texturile-->
 			</textures>
 			<position>
@@ -250,9 +299,10 @@
 				<y>1.0</y>
 				<z>1.0</z>
 			</scale>
-			<gridDimension>4</gridDimension>
-			<gridWidth>1000</gridWidth>
-			<gridHeight>1000</gridHeight>
+			<gridDimension>201</gridDimension>
+			<gridWidth>2010</gridWidth>
+			<gridHeight>2010</gridHeight>
+			<!-- <debug/> --> 
 		</object>
 
 		<object id="9">
@@ -264,6 +314,9 @@
 				<y>1000</y>
 				<z>1000</z>
 			</scale>
+			<rotation>
+				<z>180</z>				
+			</rotation>
 			<shader>2</shader>
 			<textures>
 				<texture id="6"/>

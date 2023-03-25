@@ -12,7 +12,10 @@ GLfloat Vector2::Length()
 
 Vector2 & Vector2::Normalize()
 {
-	GLfloat lenInv = 1.0f / Length();
+	float len = Length();
+	if (len == 0)
+		return *this;
+	GLfloat lenInv = 1.0f / len;
 	x *= lenInv;
 	y *= lenInv;
 

@@ -3,7 +3,7 @@
 	<models>
 		<folder path="Res/Models/">
 			<model id="1">
-				<file>croco.nfg</file>
+				<file>Croco.nfg</file>
 			</model>
 			<model id="5">
 				<file>Bila.nfg</file>
@@ -51,7 +51,14 @@
 	<textures>
 		<folder path="Res/Textures/">
 			<texture id="4" type="2d">
-				<file>croco.tga</file>			
+				<file>Croco.tga</file>			
+				<min_filter>LINEAR</min_filter>
+				<mag_filter>LINEAR</mag_filter>
+				<wrap_s>CLAMP_TO_EDGE</wrap_s>
+				<wrap_t>CLAMP_TO_EDGE</wrap_t>
+			</texture>
+			<texture id="79" type="2d">
+				<file>Train.tga</file>
 				<min_filter>LINEAR</min_filter>
 				<mag_filter>LINEAR</mag_filter>
 				<wrap_s>CLAMP_TO_EDGE</wrap_s>
@@ -65,19 +72,26 @@
 				<wrap_t>CLAMP_TO_EDGE</wrap_t>
 			</texture>
 			<texture id="14" type="2d">
-				<file>dirt.tga</file>			
+				<file>Dirt.tga</file>			
 				<min_filter>LINEAR</min_filter>
 				<mag_filter>LINEAR</mag_filter>
 				<wrap_s>CLAMP_TO_EDGE</wrap_s>
 				<wrap_t>CLAMP_TO_EDGE</wrap_t>
 			</texture>
 			<texture id="15" type="2d">
-				<file>rock.tga</file>			
+				<file>Rock.tga</file>			
 				<min_filter>LINEAR</min_filter>
 				<mag_filter>LINEAR</mag_filter>
 				<wrap_s>CLAMP_TO_EDGE</wrap_s>
 				<wrap_t>CLAMP_TO_EDGE</wrap_t>
 			</texture>		
+			<texture id="77" type="2d">
+				<file>Grass.tga</file>
+				<min_filter>LINEAR</min_filter>
+				<mag_filter>LINEAR</mag_filter>
+				<wrap_s>CLAMP_TO_EDGE</wrap_s>
+				<wrap_t>CLAMP_TO_EDGE</wrap_t>
+			</texture>
 			<texture id="5" type="2d">
 				<file>bus.tga</file>
 				<min_filter>LINEAR</min_filter>

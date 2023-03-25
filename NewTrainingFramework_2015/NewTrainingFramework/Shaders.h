@@ -5,7 +5,8 @@
 class Shader
 {
 public:
-	GLuint program, vertexShader, fragmentShader;
+	GLint program;
+	GLuint vertexShader, fragmentShader;
 	char fileVS[260];
 	char fileFS[260];
 	GLint positionAttribute;

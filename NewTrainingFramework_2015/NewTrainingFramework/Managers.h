@@ -50,12 +50,14 @@ private:
 	bool generated;
 public:
 	std::string path;
+	ModelResource* getResource();
 	int Load();
 	int Unload(); /// -1 la esec
 	Model();
 	Model(std::string path);
 	~Model();
 	friend SceneObject;
+	friend SceneManager;
 };
 
 class Texture {
@@ -76,6 +78,7 @@ public:
 		UNSETW
 	};
 private:
+	int mapId;
 	GLenum type;
 	std::string path;
 	TextureResource* tr;
@@ -83,6 +86,7 @@ private:
 	GLuint glCubeTextureId;
 	filtering_type min_filter, mag_filter;
 	wrapping_type wrap_s, wrap_t;
+	int bufferNumber;
 public:
 	int GetTextureResource(TextureResource *res);
 	int Load();
@@ -120,6 +124,8 @@ class SceneManager;
 class SkyBox;
 
 class SceneObject {
+public:
+	enum objType {NORMAL, TERRAIN, SKYBOX};
 private:
 	int id;
 	int modelId, shaderId;
@@ -130,12 +136,16 @@ private:
 	bool depthTest;
 	bool wired;
 	bool generatedModel;
-	enum objType {NORMAL, TERRAIN, SKYBOX} type;
+	objType type;
 	unsigned short int grid_dimension;
-	unsigned short int grid_width, grid_height;
+	float grid_width, grid_height;
+	bool debug;
 protected:
 	SceneObject();
 public:
+	unsigned short int getGridDimension();
+	float getGridWidth();
+	float getGridHeight();
 	std::string name;
 	Vector3 position;
 	Vector3 rotation;
@@ -147,9 +157,10 @@ public:
 	std::unordered_map<int,Texture*>& getTextures();
 	void generateModel();
 	~SceneObject();
-	SceneObject(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, bool depthTest, int modelId, int ShaderId, std::vector<int>& textureIds, objType type);
+	SceneObject(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, bool depthTest, int modelId, int ShaderId, std::vector<int>& textureIds, objType type, bool debug);
 	int Init();
 	int Draw(Matrix& vp);
+	bool isOnDebug();
 	friend SceneManager;
 	friend SkyBox;
 };
@@ -207,6 +218,7 @@ private:
 	SceneManager();
 	~SceneManager();
 public:
+	int textureCount;
 	Vector3 getFogColor();
 	std::string getGameName();
 	static SceneManager* getInstance();
@@ -221,6 +233,7 @@ public:
 	Camera* getActiveCamera();
 	int setActiveCamera(Camera* cam);
 	SceneObject* getSceneObject(int id);
+	SceneObject* getSceneObjectByType(SceneObject::objType type);
 	std::unordered_map<int, SceneObject*>& getAllSceneObjects();
 	float getFogBigRadius();
 	float getFogSmallRadius();
