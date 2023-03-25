@@ -71,10 +71,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Readme.doc" />
-    <None Include="Res\Shaders\crocoShader.fs">
+    <None Include="Res\Shaders\normalObjectShader.fs">
       <Filter>Resources\Shaders</Filter>
     </None>
-    <None Include="Res\Shaders\crocoShader.vs">
+    <None Include="Res\Shaders\normalObjectShader.vs">
       <Filter>Resources\Shaders</Filter>
     </None>
     <None Include="Res\Shaders\ballShader.vs">

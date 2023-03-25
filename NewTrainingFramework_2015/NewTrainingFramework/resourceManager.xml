@@ -11,6 +11,9 @@
 			<model id="100">
 				<file>SkyBox.nfg</file>
 			</model>
+			<model id="101">
+				<file>train.nfg</file>
+			</model>
 		</folder>
 
 		<!-- un tag folder doar specifica folderul comun pentru un grup de modele (pot sa le am in mai multe foldere)
@@ -25,8 +28,8 @@
 	<shaders>
 		<folder path="Res/Shaders/">
 			<shader id="10">
-				<vs>crocoShader.vs</vs>
-				<fs>crocoShader.fs</fs>
+				<vs>normalObjectShader.vs</vs>
+				<fs>normalObjectShader.fs</fs>
 			</shader>
 			<shader id="11">
 				<vs>ballShader.vs</vs>

@@ -189,8 +189,8 @@
     <None Include="..\..\Readme.doc" />
     <None Include="Res\Shaders\ballShader.fs" />
     <None Include="Res\Shaders\ballShader.vs" />
-    <None Include="Res\Shaders\crocoShader.fs" />
-    <None Include="Res\Shaders\crocoShader.vs" />
+    <None Include="Res\Shaders\normalObjectShader.fs" />
+    <None Include="Res\Shaders\normalObjectShader.vs" />
     <None Include="Res\Shaders\skyboxShader.fs" />
     <None Include="Res\Shaders\skyboxShader.vs" />
     <None Include="Res\Shaders\terrainShader.fs" />

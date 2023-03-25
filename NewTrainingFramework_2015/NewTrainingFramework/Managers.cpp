@@ -340,13 +340,219 @@ int Texture::getTextureId() { return glTextureId; }
 
 int Texture::Load() {
 	if (tr)
-		return -1;
+		return 0;
 	tr = new TextureResource;
 	tr->pixel_array = (unsigned char*) LoadTGA(path.c_str(), &tr->texture_width, &tr->texture_height, &tr->bpp);
 	if (tr->pixel_array == NULL) {
 		delete tr;
 		return -1;
 	}
+	if (this->type == GL_TEXTURE_2D) {
+		if (this->glTextureId == 0)
+			glGenTextures(1, &this->glTextureId); 
+		glBindTexture(GL_TEXTURE_2D, this->glTextureId);
+		switch (this->min_filter) {
+		case Texture::LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			break;
+		case Texture::NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			break;
+		case Texture::NEAREST_MIPMAP_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+			break;
+		case Texture::LINEAR_MIPMAP_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+			break;
+		case Texture::NEAREST_MIPMAP_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+			break;
+		case Texture::LINEAR_MIPMAP_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			break;
+		}
+		switch (this->mag_filter) {
+		case Texture::LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			break;
+		case Texture::NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			break;
+		case Texture::NEAREST_MIPMAP_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+			break;
+		case Texture::LINEAR_MIPMAP_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+			break;
+		case Texture::NEAREST_MIPMAP_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+			break;
+		case Texture::LINEAR_MIPMAP_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			break;
+		}
+		switch (this->wrap_s) {
+		case Texture::CLAMP_TO_EDGE:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			break;
+		case Texture::REPEAT:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			break;
+		case Texture::MIRRORED_REPEAT:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+			break;
+		}
+		switch (this->wrap_t) {
+		case Texture::CLAMP_TO_EDGE:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			break;
+		case Texture::REPEAT:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			break;
+		case Texture::MIRRORED_REPEAT:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+			break;
+		}
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->tr->texture_width, this->tr->texture_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, this->tr->pixel_array);
+		glBindTexture(GL_TEXTURE0 + SceneManager::getInstance()->textureCount, 0);
+		this->bufferNumber = SceneManager::getInstance()->textureCount;
+		++(SceneManager::getInstance()->textureCount);
+	}
+	else
+		if (this->type == GL_TEXTURE_CUBE_MAP) {
+			if (this->glCubeTextureId != 0)
+				glGenTextures(1, &this->glCubeTextureId);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, this->glCubeTextureId);
+			switch (this->min_filter) {
+			case Texture::LINEAR:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				break;
+			case Texture::NEAREST:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				break;
+			case Texture::NEAREST_MIPMAP_NEAREST:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+				break;
+			case Texture::LINEAR_MIPMAP_NEAREST:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+				break;
+			case Texture::NEAREST_MIPMAP_LINEAR:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+				break;
+			case Texture::LINEAR_MIPMAP_LINEAR:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				break;
+			}
+			switch (this->mag_filter) {
+			case Texture::LINEAR:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				break;
+			case Texture::NEAREST:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				break;
+			case Texture::NEAREST_MIPMAP_NEAREST:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+				break;
+			case Texture::LINEAR_MIPMAP_NEAREST:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+				break;
+			case Texture::NEAREST_MIPMAP_LINEAR:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+				break;
+			case Texture::LINEAR_MIPMAP_LINEAR:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				break;
+			}
+			switch (this->wrap_s) {
+			case Texture::CLAMP_TO_EDGE:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				break;
+			case Texture::REPEAT:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				break;
+			case Texture::MIRRORED_REPEAT:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+				break;
+			}
+			switch (this->wrap_t) {
+			case Texture::CLAMP_TO_EDGE:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				break;
+			case Texture::REPEAT:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				break;
+			case Texture::MIRRORED_REPEAT:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+				break;
+			}
+			for (int j = 0; j < 6; ++j) {
+				int bpp = this->tr->bpp;
+				int H = this->tr->texture_height;
+				int W = this->tr->texture_width * (bpp / 8);
+				unsigned char* px_array = this->tr->pixel_array;
+
+				int targetH_start, targetH_end, targetW_start, targetW_end;
+
+				switch (j) {
+				case 0:
+					targetH_start = H / 3;
+					targetH_end = 2 * H / 3;
+
+					targetW_start = W / 2;
+					targetW_end = 3 * W / 4;
+					break;
+				case 1:
+					targetH_start = H / 3;
+					targetH_end = 2 * H / 3;
+
+					targetW_start = 0;
+					targetW_end = W / 4;
+					break;
+				case 2:
+					targetH_start = 0;
+					targetH_end = H / 3;
+
+					targetW_start = W / 4;
+					targetW_end = W / 2;
+					break;
+				case 3:
+					targetH_start = 2 * H / 3;
+					targetH_end = H;
+
+					targetW_start = W / 4;
+					targetW_end = W / 2;
+					break;
+				case 4:
+					targetH_start = H / 3;
+					targetH_end = 2 * H / 3;
+
+					targetW_start = W / 4;
+					targetW_end = W / 2;
+					break;
+				case 5:
+					targetH_start = H / 3;
+					targetH_end = 2 * H / 3;
+
+					targetW_start = 3 * W / 4;
+					targetW_end = W;
+					break;
+				}
+
+				unsigned char* trimmed_array = new unsigned char[(H / 3) * (W / 4)];
+				int k = 0;
+				int offset = targetH_start * W;
+				for (int z = targetH_start; z < targetH_end; ++z)
+					for (int q = targetW_start; q < targetW_end; ++q)
+						//trimmed_array[k++] = px_array[offset + W * z + q + (z-targetH_start) * W];
+						trimmed_array[k++] = px_array[W * z + q];
+
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, 0, GL_RGB, this->tr->texture_width / 4, this->tr->texture_height / 3, 0, GL_RGB, GL_UNSIGNED_BYTE, trimmed_array);
+
+				delete[] trimmed_array;
+			}
+			glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+		}
 	return 0;
 }
 
@@ -447,7 +653,7 @@ SceneManager::SceneManager() {
 	camAxesColor.Oz = Vector3(1, 1, 1);
 	fog.bigRadius = 900;
 	fog.smallRadius = 800;
-	fog.color = Vector3(1,1,1);
+	fog.color = Vector3(60.0/255, 68.0/255, 85.0/255);
 	fog.blendToSkybox = false;
 	textureCount = 0;
 }
@@ -1182,219 +1388,8 @@ int SceneObject::Init() {
 	delete[] vertices_data;
 /// textures
 	if(this->type != SceneObject::TERRAIN)
-	for (auto& txt : this->textures) {
-		if (txt.second->type == GL_TEXTURE_2D) {
-			if(txt.second->glTextureId != 0)
-				glGenTextures(1, &txt.second->glTextureId);
-			glBindTexture(GL_TEXTURE_2D, txt.second->glTextureId); 
-			switch (txt.second->min_filter) {
-			case Texture::LINEAR:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				break;
-			case Texture::NEAREST:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				break;
-			case Texture::NEAREST_MIPMAP_NEAREST:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-				break;
-			case Texture::LINEAR_MIPMAP_NEAREST:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-				break;
-			case Texture::NEAREST_MIPMAP_LINEAR:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-				break;
-			case Texture::LINEAR_MIPMAP_LINEAR:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-				break;
-			}
-			switch (txt.second->mag_filter) {
-			case Texture::LINEAR:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				break;
-			case Texture::NEAREST:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-				break;
-			case Texture::NEAREST_MIPMAP_NEAREST:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-				break;
-			case Texture::LINEAR_MIPMAP_NEAREST:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-				break;
-			case Texture::NEAREST_MIPMAP_LINEAR:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-				break;
-			case Texture::LINEAR_MIPMAP_LINEAR:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-				break;
-			}
-			switch (txt.second->wrap_s) {
-			case Texture::CLAMP_TO_EDGE:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-				break;
-			case Texture::REPEAT:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-				break;
-			case Texture::MIRRORED_REPEAT:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-				break;
-			}
-			switch (txt.second->wrap_t) {
-			case Texture::CLAMP_TO_EDGE:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-				break;
-			case Texture::REPEAT:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-				break;
-			case Texture::MIRRORED_REPEAT:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-				break;
-			}
-			txt.second->Load();
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, txt.second->tr->texture_width, txt.second->tr->texture_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, txt.second->tr->pixel_array);
-			glActiveTexture(GL_TEXTURE0 + SceneManager::getInstance()->textureCount);
-			glBindTexture(GL_TEXTURE0 + SceneManager::getInstance()->textureCount, 0);
-			txt.second->bufferNumber = SceneManager::getInstance()->textureCount;
-			++(SceneManager::getInstance()->textureCount);
-		}
-		else 
-			if (txt.second->type == GL_TEXTURE_CUBE_MAP) {
-				if(txt.second->glCubeTextureId != 0)
-					glGenTextures(1, &txt.second->glCubeTextureId);
-				glBindTexture(GL_TEXTURE_CUBE_MAP, txt.second->glCubeTextureId);
-				switch (txt.second->min_filter) {
-				case Texture::LINEAR:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-					break;
-				case Texture::NEAREST:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-					break;
-				case Texture::NEAREST_MIPMAP_NEAREST:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-					break;
-				case Texture::LINEAR_MIPMAP_NEAREST:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-					break;
-				case Texture::NEAREST_MIPMAP_LINEAR:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-					break;
-				case Texture::LINEAR_MIPMAP_LINEAR:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-					break;
-				}
-				switch (txt.second->mag_filter) {
-				case Texture::LINEAR:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-					break;
-				case Texture::NEAREST:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-					break;
-				case Texture::NEAREST_MIPMAP_NEAREST:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-					break;
-				case Texture::LINEAR_MIPMAP_NEAREST:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-					break;
-				case Texture::NEAREST_MIPMAP_LINEAR:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-					break;
-				case Texture::LINEAR_MIPMAP_LINEAR:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-					break;
-				}
-				switch (txt.second->wrap_s) {
-				case Texture::CLAMP_TO_EDGE:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-					break;
-				case Texture::REPEAT:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT);
-					break;
-				case Texture::MIRRORED_REPEAT:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-					break;
-				}
-				switch (txt.second->wrap_t) {
-				case Texture::CLAMP_TO_EDGE:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-					break;
-				case Texture::REPEAT:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT);
-					break;
-				case Texture::MIRRORED_REPEAT:
-					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-					break;
-				}
-				for (int j = 0; j < 6; ++j) {
-					txt.second->Load();
-
-					int bpp = txt.second->tr->bpp;
-					int H = txt.second->tr->texture_height;
-					int W = txt.second->tr->texture_width * (bpp / 8);
-					unsigned char* px_array = txt.second->tr->pixel_array;
-
-					int targetH_start,targetH_end, targetW_start, targetW_end;
-					
-					switch (j) {
-					case 0:
-						targetH_start = H / 3;
-						targetH_end = 2 * H / 3;
-
-						targetW_start =  W / 2;
-						targetW_end = 3 * W / 4;
-						break;
-					case 1:
-						targetH_start = H / 3;
-						targetH_end = 2 * H / 3;
-
-						targetW_start = 0;
-						targetW_end = W / 4;
-						break;
-					case 2:
-						targetH_start = 0;
-						targetH_end = H / 3;
-
-						targetW_start = W / 4;
-						targetW_end = W / 2;
-						break;
-					case 3:
-						targetH_start = 2 * H / 3;
-						targetH_end = H;
-
-						targetW_start = W / 4;
-						targetW_end =  W / 2;
-						break;
-					case 4:
-						targetH_start = H / 3;
-						targetH_end = 2 * H / 3;
-
-						targetW_start = W / 4;
-						targetW_end = W / 2;
-						break;
-					case 5:
-						targetH_start = H / 3;
-						targetH_end = 2 * H / 3;
-
-						targetW_start = 3 * W / 4;
-						targetW_end = W;
-						break;
-					}
-
-					unsigned char* trimmed_array = new unsigned char[(H/3) * (W/4)];
-					int k = 0;
-					int offset = targetH_start * W;
-					for (int z = targetH_start; z < targetH_end; ++z)
-						for (int q = targetW_start; q < targetW_end; ++q)
-							//trimmed_array[k++] = px_array[offset + W * z + q + (z-targetH_start) * W];
-							trimmed_array[k++] = px_array[W * z + q];
-						
-					glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, 0, GL_RGB, txt.second->tr->texture_width / 4, txt.second->tr->texture_height / 3, 0, GL_RGB, GL_UNSIGNED_BYTE, trimmed_array);
-
-					delete[] trimmed_array;
-				}
-				glActiveTexture(GL_TEXTURE_CUBE_MAP);
-				glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-			}
-	}
-
+	for (auto& txt : this->textures) 
+		txt.second->Load();
 /// shader
 	if(this->shader->vertexShader != 0)
 		if (this->shader->Init() != 0)
@@ -1417,14 +1412,17 @@ int SceneObject::Draw(Matrix &vp) {
 	glBindBuffer(GL_ARRAY_BUFFER, this->model->vboId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->model->iboId);
 
+	int i = 0;
 	for (auto& x : this->textures)
 		if (x.second->type == GL_TEXTURE_2D) {
-			glBindTexture(GL_TEXTURE0 + x.second->bufferNumber, x.second->glTextureId);
-			glActiveTexture(GL_TEXTURE0 + x.second->bufferNumber);
+			glBindTexture(GL_TEXTURE_2D, x.second->glTextureId);
+			glActiveTexture(GL_TEXTURE0 + i);
+			if (this->shader->textureUniform != -1)
+				glUniform1i(this->shader->textureUniform, i);
 		}
 		else
 			if (x.second->type == GL_TEXTURE_CUBE_MAP) {
-				glBindTexture(GL_TEXTURE_CUBE_MAP, x.second->glCubeTextureId);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, x.second->glTextureId);
 				glActiveTexture(GL_TEXTURE_CUBE_MAP);
 			}
 
@@ -1455,11 +1453,9 @@ int SceneObject::Draw(Matrix &vp) {
 		glEnableVertexAttribArray(this->shader->uvAttribute);
 		glVertexAttribPointer(this->shader->uvAttribute, 2, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), (GLvoid*)(5 * sizeof(Vector3)));
 	}
-	if (this->shader->textureUniform != -1)
-		glUniform1i(this->shader->textureUniform, 0);
 
 	if (this->shader->cubeTextureUniform != -1)
-		glUniform1i(this->shader->cubeTextureUniform, 0); /// ?
+		glUniform1i(this->shader->cubeTextureUniform, 0); 
 
 	if (this->shader->fogColorUniform != -1) {
 		Vector3 fogColor = SceneManager::getInstance()->getFogColor();
@@ -1479,12 +1475,11 @@ int SceneObject::Draw(Matrix &vp) {
 
 	glDrawElements(GL_TRIANGLES, 3 * this->model->mr->indices.size(), GL_UNSIGNED_SHORT, 0);
 
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	for (auto& x : this->textures)
-		if (x.second->type == GL_TEXTURE_2D)
-			glBindTexture(GL_TEXTURE0 + x.second->bufferNumber, 0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	return 0;
 }
 
