@@ -1,9 +1,4 @@
 // NewTrainingFramework.cpp : Defines the entry point for the console application.
-/** 
-	ISSUES: wired?, fullscreen
-
-	skybox texture CUBEMAP??
-**/
 
 /***
 HIGHLIGHTS:

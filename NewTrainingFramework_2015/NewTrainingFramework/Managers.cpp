@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Model.h"
 #include "Globals.h"
+#include <cstring>
 #include <cmath>
 
 /*Singleton::Singleton() {
@@ -413,7 +414,7 @@ int Texture::Load() {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 			break;
 		}
-
+		std::cout << this->path << '\n'; /// TOFIX
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->tr->texture_width, this->tr->texture_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, this->tr->pixel_array);
 		glBindTexture(GL_TEXTURE0 + SceneManager::getInstance()->textureCount, 0);
 		this->bufferNumber = SceneManager::getInstance()->textureCount;
@@ -1387,12 +1388,12 @@ int SceneObject::Init() {
 
 	delete[] vertices_data;
 /// textures
-	if(this->type != SceneObject::TERRAIN)
-	for (auto& txt : this->textures) 
+	for (auto& txt : this->textures) {
 		txt.second->Load();
+	}
 /// shader
 	if(this->shader->vertexShader != 0)
-		if (this->shader->Init() != 0)
+		if (this->shader->Init(this->textures.size()) != 0)
 			return -1;
 	return 0;
 }
@@ -1413,18 +1414,39 @@ int SceneObject::Draw(Matrix &vp) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->model->iboId);
 
 	int i = 0;
+	if(this->type == TERRAIN)
+		for (auto& x : this->textures)
+			if (x.second->type == GL_TEXTURE_2D) {
+				if (strstr(_strlwr((char*)x.second->path.c_str()), "terrain_blend_map") != NULL) {
+					glActiveTexture(GL_TEXTURE0 + i);
+					glBindTexture(GL_TEXTURE_2D, x.second->glTextureId);
+					if (this->shader->textureUniforms[i] != -1) {
+						glUniform1i(this->shader->textureUniforms[i], i);
+					}
+					++i;
+					break;
+				}
+			}
 	for (auto& x : this->textures)
 		if (x.second->type == GL_TEXTURE_2D) {
-			glBindTexture(GL_TEXTURE_2D, x.second->glTextureId);
-			glActiveTexture(GL_TEXTURE0 + i);
-			if (this->shader->textureUniform != -1)
-				glUniform1i(this->shader->textureUniform, i);
+			if (strstr(_strlwr((char*) x.second->path.c_str()),"terrain_blend_map") == NULL) {
+				glActiveTexture(GL_TEXTURE0 + i);
+				glBindTexture(GL_TEXTURE_2D, x.second->glTextureId);
+				if (this->shader->textureUniforms[i] != -1) {
+					glUniform1i(this->shader->textureUniforms[i], i);
+				}
+				++i;
+			}
 		}
 		else
 			if (x.second->type == GL_TEXTURE_CUBE_MAP) {
-				glBindTexture(GL_TEXTURE_CUBE_MAP, x.second->glTextureId);
 				glActiveTexture(GL_TEXTURE_CUBE_MAP);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, x.second->glTextureId);
 			}
+	if(this->type == TERRAIN)
+		if (this->shader->aux != -1) {
+			glUniform1f(this->shader->aux, (GLfloat)this->grid_dimension);
+		}
 
 	if (this->shader->positionAttribute != -1) {
 		glEnableVertexAttribArray(this->shader->positionAttribute);

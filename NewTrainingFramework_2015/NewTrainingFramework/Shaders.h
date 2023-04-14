@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <vector>
+#include "Globals.h"
 #include "../Utilities/utilities.h"
 
 class Shader
@@ -20,16 +22,16 @@ public:
 	GLint binormalAttribute;
 	GLint tangentAttribute;
 	GLint uvAttribute;
-	GLint textureUniform;
+	std::vector<GLint> textureUniforms;
 	GLint cubeTextureUniform;
 	GLint fogColorUniform;
 	GLint camPosition;
 	GLint smallRadius;
 	GLint bigRadius;
+	GLint aux;
 
-
-	int Init(char * fileVertexShader, char * fileFragmentShader);
-	int Init();
+	int Init(char * fileVertexShader, char * fileFragmentShader, int nr_textures);
+	int Init(int nr_textures);
 	Shader();
 	Shader(std::string FSpath, std::string VSpath);
 	~Shader();

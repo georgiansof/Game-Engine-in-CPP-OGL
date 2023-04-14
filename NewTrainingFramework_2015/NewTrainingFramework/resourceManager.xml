@@ -74,27 +74,36 @@
 				<wrap_s>CLAMP_TO_EDGE</wrap_s>
 				<wrap_t>CLAMP_TO_EDGE</wrap_t>
 			</texture>
-			<texture id="14" type="2d">
-				<file>Dirt.tga</file>			
+
+			<texture id="31" type="2d">
+				<file>Terrain_blend_map.tga</file>
 				<min_filter>LINEAR</min_filter>
 				<mag_filter>LINEAR</mag_filter>
 				<wrap_s>CLAMP_TO_EDGE</wrap_s>
 				<wrap_t>CLAMP_TO_EDGE</wrap_t>
 			</texture>
 			<texture id="15" type="2d">
-				<file>Rock.tga</file>			
+				<file>SCV.tga</file>			
 				<min_filter>LINEAR</min_filter>
 				<mag_filter>LINEAR</mag_filter>
-				<wrap_s>CLAMP_TO_EDGE</wrap_s>
-				<wrap_t>CLAMP_TO_EDGE</wrap_t>
+				<wrap_s>REPEAT</wrap_s>
+				<wrap_t>REPEAT</wrap_t>
+			</texture>
+			<texture id="14" type="2d">
+				<file>Witch.tga</file>			
+				<min_filter>LINEAR</min_filter>
+				<mag_filter>LINEAR</mag_filter>
+				<wrap_s>REPEAT</wrap_s>
+				<wrap_t>REPEAT</wrap_t>
 			</texture>		
 			<texture id="77" type="2d">
-				<file>Grass.tga</file>
+				<file>House.tga</file>
 				<min_filter>LINEAR</min_filter>
 				<mag_filter>LINEAR</mag_filter>
-				<wrap_s>CLAMP_TO_EDGE</wrap_s>
-				<wrap_t>CLAMP_TO_EDGE</wrap_t>
+				<wrap_s>REPEAT</wrap_s>
+				<wrap_t>REPEAT</wrap_t>
 			</texture>
+
 			<texture id="5" type="2d">
 				<file>bus.tga</file>
 				<min_filter>LINEAR</min_filter>

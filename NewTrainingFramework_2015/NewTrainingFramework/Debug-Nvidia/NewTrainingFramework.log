@@ -1,5 +1,5 @@
 ﻿cl : command line  warning D9035: option 'Gm' has been deprecated and will be removed in a future release
   NewTrainingFramework.cpp
-C:\Users\je_gi\Desktop\proiect gameloft\workshop-gameloft\NewTrainingFramework_2015\NewTrainingFramework\NewTrainingFramework.cpp(194,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\je_gi\Desktop\proiect gameloft\workshop-gameloft\NewTrainingFramework_2015\NewTrainingFramework\NewTrainingFramework.cpp(204,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\je_gi\Desktop\proiect gameloft\workshop-gameloft\NewTrainingFramework_2015\NewTrainingFramework\NewTrainingFramework.cpp(189,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\je_gi\Desktop\proiect gameloft\workshop-gameloft\NewTrainingFramework_2015\NewTrainingFramework\NewTrainingFramework.cpp(199,21): warning C4018: '<': signed/unsigned mismatch
   NewTrainingFramework.vcxproj -> C:\Users\je_gi\Desktop\proiect gameloft\workshop-gameloft\NewTrainingFramework_2015\BIN-Nvidia\NewTrainingFramework.exe

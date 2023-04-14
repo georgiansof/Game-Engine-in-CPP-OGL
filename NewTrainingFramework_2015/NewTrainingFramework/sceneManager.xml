@@ -2,7 +2,7 @@
 <sceneManager>
 	<!-- IMPORTANT! toate tagurile si atributele de tip comment trebuie ignorate (nu le parsati)
 	le-am adaugat ca sa evit cazul de comentarii imbricate (imposibile in XML) -->
-	<gameName>My game engine</gameName>
+	<gameName>georgiansof @ Gameloft</gameName>
 	<defaultScreenSize>
 		<width>1280</width>
 		<height>720</height>
@@ -282,6 +282,7 @@
 			<type>terrain</type>
 			<name>Teren</name>
 			<textures>
+				<texture id="31"/>
 				<texture id="14"/>
 				<texture id="15"/>
 				<texture id="77"/> 

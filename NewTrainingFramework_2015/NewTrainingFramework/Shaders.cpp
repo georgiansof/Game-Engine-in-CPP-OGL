@@ -4,13 +4,13 @@
 
 using std::string;
 
-int Shader::Init() {
+int Shader::Init(int nr_textures) {
 	if (fileVS[0] == NULL || fileFS[0] == NULL)
 		return -1;
-	Init(this->fileVS, this->fileFS);
+	Init(this->fileVS, this->fileFS, nr_textures);
 }
 
-int Shader::Init(char * fileVertexShader, char * fileFragmentShader)
+int Shader::Init(char * fileVertexShader, char * fileFragmentShader, int nr_textures)
 {
 	vertexShader = esLoadShader(GL_VERTEX_SHADER, fileVertexShader);
 
@@ -35,7 +35,10 @@ int Shader::Init(char * fileVertexShader, char * fileFragmentShader)
 	uvAttribute = glGetAttribLocation(program, "a_uv");
 	colorAttribute = glGetAttribLocation(program, "a_color");
 	cam_matrixUniform = glGetUniformLocation(program, "m_camera");
-	textureUniform = glGetUniformLocation(program, "u_texture");
+	textureUniforms.resize(nr_textures);
+	int i = 0;
+	for(auto& textureUniformX:textureUniforms)
+		textureUniformX = glGetUniformLocation(program, (string("u_texture_") + std::to_string(i)).c_str());
 	fogColorUniform = glGetUniformLocation(program, "u_fogColor");
 	camPosition = glGetUniformLocation(program, "u_camPosition");
 	smallRadius = glGetUniformLocation(program, "u_smallRadius");
@@ -44,6 +47,7 @@ int Shader::Init(char * fileVertexShader, char * fileFragmentShader)
 	View_matrixUniform = glGetUniformLocation(program, "m_viewMatrix");
 	Perspective_matrixUniform = glGetUniformLocation(program, "m_perspectiveMatrix");
 	cubeTextureUniform = glGetUniformLocation(program, "u_cube_texture");
+	aux = glGetUniformLocation(program, "u_aux");
 	return 0;
 }
 
@@ -66,7 +70,6 @@ Shader::Shader() {
 	binormalAttribute = -1;
 	tangentAttribute = -1;
 	uvAttribute = -1;
-	textureUniform = -1;
 	fogColorUniform = -1;
 	camPosition = -1;
 	smallRadius = -1;

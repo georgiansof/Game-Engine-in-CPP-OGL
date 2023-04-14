@@ -1,5 +1,7 @@
 #pragma once
 
+#define MAX_TEXTURES 5
+
 class Globals
 {
 public:
