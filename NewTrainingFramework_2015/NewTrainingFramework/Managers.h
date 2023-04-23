@@ -9,6 +9,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <map>
 #include "Model.h"
 #include "Camera.h"
 #include "Shaders.h"
@@ -88,7 +89,6 @@ private:
 	wrapping_type wrap_s, wrap_t;
 	int bufferNumber;
 public:
-	int GetTextureResource(TextureResource *res);
 	int Load();
 	int Unload(); 
 	std::string getTGA();
@@ -123,24 +123,24 @@ class SceneManager;
 
 class SkyBox;
 
+class Fire;
+
 class SceneObject {
 public:
-	enum objType {NORMAL, TERRAIN, SKYBOX};
-private:
+	enum objType {NORMAL, TERRAIN, SKYBOX, FIRE} type;
+protected:
 	int id;
 	int modelId, shaderId;
 	std::vector<int> textureIds;
 	Model* model;
 	Shader* shader;
-	std::unordered_map<int, Texture*> textures;
+	std::map<int, Texture*> textures;
 	bool depthTest;
 	bool wired;
 	bool generatedModel;
-	objType type;
 	unsigned short int grid_dimension;
 	float grid_width, grid_height;
 	bool debug;
-protected:
 	SceneObject();
 public:
 	unsigned short int getGridDimension();
@@ -154,15 +154,30 @@ public:
 	Vector3 followingCamera;
 	Model* getModel();
 	Shader* getShader();
-	std::unordered_map<int,Texture*>& getTextures();
+	std::map<int,Texture*>& getTextures();
 	void generateModel();
 	~SceneObject();
-	SceneObject(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, bool depthTest, int modelId, int ShaderId, std::vector<int>& textureIds, objType type, bool debug);
+	SceneObject(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, bool depthTest, int modelId, int shaderId, std::vector<int>& textureIds, objType type, bool debug);
 	int Init();
 	int Draw(Matrix& vp);
 	bool isOnDebug();
 	friend SceneManager;
 	friend SkyBox;
+	friend Fire;
+};
+
+class Fire : public SceneObject {
+private:
+	float dispMax;
+	float timer;
+	Fire();
+public:
+	Fire(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, bool depthTest, int modelId, int ShaderId, std::vector<int>& textureIds, objType type, bool debug, float dispMax);
+	Fire(SceneObject* obj, float dispMax);
+	void UpdateTimer(float delta);
+	float get_dispMax();
+	float get_time();
+	friend SceneManager;
 };
 
 class SkyBox : public SceneObject {

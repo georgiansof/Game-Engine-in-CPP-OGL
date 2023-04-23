@@ -33,12 +33,15 @@ int Shader::Init(char * fileVertexShader, char * fileFragmentShader, int nr_text
 	binormalAttribute = glGetAttribLocation(program, "a_binormal");
 	tangentAttribute = glGetAttribLocation(program, "a_tangent");
 	uvAttribute = glGetAttribLocation(program, "a_uv");
+	uv2Attribute = glGetAttribLocation(program, "a_uv2");
 	colorAttribute = glGetAttribLocation(program, "a_color");
 	cam_matrixUniform = glGetUniformLocation(program, "m_camera");
+
 	textureUniforms.resize(nr_textures);
 	int i = 0;
-	for(auto& textureUniformX:textureUniforms)
-		textureUniformX = glGetUniformLocation(program, (string("u_texture_") + std::to_string(i)).c_str());
+	for(std::vector<GLint>::iterator it = textureUniforms.begin(); it!=textureUniforms.end(); ++it, ++i)
+		*it = glGetUniformLocation(program, (string("u_texture_") + std::to_string(i)).c_str());
+
 	fogColorUniform = glGetUniformLocation(program, "u_fogColor");
 	camPosition = glGetUniformLocation(program, "u_camPosition");
 	smallRadius = glGetUniformLocation(program, "u_smallRadius");
@@ -47,7 +50,10 @@ int Shader::Init(char * fileVertexShader, char * fileFragmentShader, int nr_text
 	View_matrixUniform = glGetUniformLocation(program, "m_viewMatrix");
 	Perspective_matrixUniform = glGetUniformLocation(program, "m_perspectiveMatrix");
 	cubeTextureUniform = glGetUniformLocation(program, "u_cube_texture");
-	aux = glGetUniformLocation(program, "u_aux");
+	
+	timeUniform = glGetUniformLocation(program, "u_time");
+	dispMaxUniform = glGetUniformLocation(program, "u_dispMax");
+
 	return 0;
 }
 
@@ -74,6 +80,9 @@ Shader::Shader() {
 	camPosition = -1;
 	smallRadius = -1;
 	bigRadius = -1;
+	uv2Attribute = -1;
+	timeUniform = -1;
+	dispMaxUniform = -1;
 }
 
 Shader::Shader(string FSpath, string VSpath) {

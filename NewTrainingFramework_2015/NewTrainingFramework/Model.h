@@ -8,7 +8,7 @@
 
 struct ModelVertex {
 	Vector3 pos,color, norm, binorm, tgt;
-	Vector2 uv;
+	Vector2 uv, uv2;
 	ModelVertex();
 	ModelVertex(ModelVertex const &mv);
 };

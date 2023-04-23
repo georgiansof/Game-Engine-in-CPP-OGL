@@ -28,7 +28,9 @@ public:
 	GLint camPosition;
 	GLint smallRadius;
 	GLint bigRadius;
-	GLint aux;
+	GLint uv2Attribute;
+	GLint timeUniform;
+	GLint dispMaxUniform;
 
 	int Init(char * fileVertexShader, char * fileFragmentShader, int nr_textures);
 	int Init(int nr_textures);

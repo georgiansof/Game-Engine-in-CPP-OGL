@@ -54,6 +54,8 @@ int Init(ESContext* esContext) {
 	Vector4 bgcolor = SceneManager::getInstance()->getBgColor();
 	glClearColor(bgcolor.x, bgcolor.y, bgcolor.z, 1.0f);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	/*
 	
 	glGenBuffers(1, &indices_vboId);
@@ -103,7 +105,6 @@ int Init(ESContext* esContext) {
 	int ret = !!retmdl;
 	 */
 	for (auto& x : sceneManager->getAllSceneObjects()) {
-		
 		if (x.second->Init() != 0)
 			return -1;
 	}
@@ -188,8 +189,10 @@ void UpdateTerrain(float dx, float dz) {
 		ModelResource* tmdlres = terrain->getModel()->getResource();
 		for (int i = 0; i < tmdlres->vertices.size(); ++i)
 			//if (dz > 0)
-			if(!terrain->isOnDebug())
+			if (!terrain->isOnDebug()) {
 				tmdlres->vertices[i].pos.z += dz;//terrain->getGridHeight() / terrain->getGridDimension();
+				tmdlres->vertices[i].uv2.y += dz / abs(dz) / terrain->getGridDimension();
+			}
 			//else
 			//	tmdlres->vertices[i].pos.z -= dz;//terrain->getGridHeight() / terrain->getGridDimension();
 	}
@@ -198,8 +201,10 @@ void UpdateTerrain(float dx, float dz) {
 		ModelResource* tmdlres = terrain->getModel()->getResource();
 		for (int i = 0; i < tmdlres->vertices.size(); ++i)
 			//if (dx > 0)
-			if(!terrain->isOnDebug())
+			if (!terrain->isOnDebug()) {
 				tmdlres->vertices[i].pos.x += dx; //terrain->getGridWidth() / terrain->getGridDimension();
+				tmdlres->vertices[i].uv2.x += dx / abs(dx) / terrain->getGridDimension();
+			}
 			//else
 			//	tmdlres->vertices[i].pos.x -= dx; //terrain->getGridWidth() / terrain->getGridDimension();
 	}
@@ -229,6 +234,12 @@ void Update ( ESContext *esContext, float deltaTime )
 	dx += currentCamPos.x - lastCamPos.x;
 	dz += currentCamPos.z - lastCamPos.z;
 	lastCamPos = currentCamPos;
+
+	for (auto& x : sceneManager->getAllSceneObjects()) 
+		if (x.second->type == SceneObject::FIRE) {
+			Fire *fire = static_cast<Fire*>(x.second);
+			fire->UpdateTimer(deltaTime/1000.0f);
+		}
 }
 
 void MouseEvent(ESContext* esContext, MouseButton button, MouseEventType eventType, float mouseX, float mouseY) {		

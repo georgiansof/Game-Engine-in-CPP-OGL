@@ -65,11 +65,11 @@
 			<action>ROTATE_CAMERA_POSITIVE_X</action>
 		</control>
 		<control>
-			<key> F1 </key>
+			<key> F3 </key>
 			<action> ROTATE_CAMERA_NEGATIVE_Z </action>
 		</control>
 		<control>
-			<key> F3 </key>
+			<key> F1 </key>
 			<action> ROTATE_CAMERA_POSITIVE_Z </action>
 		</control>
 		<control>
@@ -110,8 +110,8 @@
 				<y>1</y>
 				<z>0</z>
 			</up>
-			<translationSpeed>100</translationSpeed>
-			<rotationSpeed>1</rotationSpeed>
+			<translationSpeed>500</translationSpeed> <!-- px / s-->
+			<rotationSpeed>2</rotationSpeed> <!-- radiani / s-->
 			<fov>90</fov>
 			<near>0.1</near>
 			<far>10000</far>
@@ -135,9 +135,9 @@
 				<texture id="4"/>
 			</textures>
 			<position>
-				<x>100</x>
+				<x>300</x>
 				<y>27</y>
-				<z>100</z>
+				<z>200</z>
 			</position>
 			<rotation>
 				<x>68</x>
@@ -183,9 +183,9 @@
 				<texture id="4"/>
 			</textures>
 			<position>
-				<x>-100</x>
+				<x>-200</x>
 				<y>27</y>
-				<z>-100</z>
+				<z>-200</z>
 			</position>
 			<rotation>
 				<x>360</x>
@@ -260,9 +260,9 @@
 					<texture id="79"/>
 				</textures>
 				<position>
-					<x>0</x>
-					<y>0</y>
-					<z>0</z>
+					<x>-400</x>
+					<y>-100</y>
+					<z>-400</z>
 				</position>
 				<rotation>
 					<x>0</x>
@@ -282,15 +282,15 @@
 			<type>terrain</type>
 			<name>Teren</name>
 			<textures>
-				<texture id="31"/>
 				<texture id="14"/>
 				<texture id="15"/>
-				<texture id="77"/> 
+				<texture id="16"/> 
+				<texture id="31"/>
 				<!-- TO DO adaugati texturile-->
 			</textures>
 			<position>
 				<x>0</x>
-				<y>-50</y>
+				<y>-100</y>
 				<z>0</z>
 			</position>
 			<rotation>
@@ -303,9 +303,9 @@
 				<y>1.0</y>
 				<z>1.0</z>
 			</scale>
-			<gridDimension>201</gridDimension>
-			<gridWidth>2010</gridWidth>
-			<gridHeight>2010</gridHeight>
+			<gridDimension>35</gridDimension>
+			<gridWidth>5250</gridWidth>
+			<gridHeight>5250</gridHeight>
 			<!-- <debug/> --> 
 		</object>
 
@@ -314,9 +314,9 @@
 			<name>Skybox</name>
 			<type>skybox</type>
 			<scale>
-				<x>1000</x>
-				<y>1000</y>
-				<z>1000</z>
+				<x>5000</x>
+				<y>5000</y>
+				<z>5000</z>
 			</scale>
 			<rotation>
 				<z>180</z>				
@@ -327,16 +327,44 @@
 			</textures>
 			<followingCamera>
 				<ox/>
+				<oy/>
 				<oz/>
 			</followingCamera>
-			<offsetY>700</offsetY>
+			<offsetY>3500</offsetY>
 		</object>
+		<object id="10">
+			<model>109</model>
+			<name>Fire</name>
+			<type>fire</type>
+			<dispMax>50</dispMax>
+			<position>
+				<x>0</x>
+				<y>-200</y>
+				<z>300</z>
+			</position>
+			<scale>
+				<x>25</x>
+				<y>25</y>
+				<z>25</z>
+			</scale>
+			<rotation>
+				<x>0</x>
+				<y>0</y>
+				<z>0</z>
+			</rotation>
+			<shader>108</shader>
+			<textures>
+				<texture id="105"/>
+				<texture id="106"/>
+				<texture id="107"/>
+			</textures>
+		</object> 
 	</objects>
 	
 	<fog>
 		<radiuses>
-			<small>800</small>
-			<big>900</big>
+			<small>3000</small>
+			<big>4000</big>
 		</radiuses>
 		<color blend = "true">
 			<r>0.0</r>

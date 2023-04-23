@@ -14,6 +14,9 @@
 			<model id="101">
 				<file>train.nfg</file>
 			</model>
+			<model id="109">
+				<file>fire.nfg</file>
+			</model>
 		</folder>
 
 		<!-- un tag folder doar specifica folderul comun pentru un grup de modele (pot sa le am in mai multe foldere)
@@ -47,12 +50,39 @@
 				<vs>terrainShader.vs</vs>
 				<fs>terrainShader.fs</fs>
 			</shader>
-		<!-- si aici se adauga toate shaderele -->
+			<shader id="108">
+				<vs>fireShader.vs</vs>
+				<fs>fireShader.fs</fs>
+			</shader>
 		</folder>
 		
 	</shaders>
 	<textures>
 		<folder path="Res/Textures/">
+			<texture id="105" type="2d">
+				<file>DisplacementMap.tga</file>
+				<min_filter>NEAREST</min_filter>
+				<mag_filter>NEAREST</mag_filter>
+				<wrap_s>REPEAT</wrap_s>
+				<wrap_t>REPEAT</wrap_t>
+			</texture>
+
+			<texture id="106" type="2d">
+				<file>fire_mask.tga</file>
+				<min_filter>LINEAR</min_filter>
+				<mag_filter>LINEAR</mag_filter>
+				<wrap_s>CLAMP_TO_EDGE</wrap_s>
+				<wrap_t>CLAMP_TO_EDGE</wrap_t>
+			</texture>
+
+			<texture id="107" type="2d">
+				<file>fire3.tga</file>
+				<min_filter>LINEAR</min_filter>
+				<mag_filter>LINEAR</mag_filter>
+				<wrap_s>CLAMP_TO_EDGE</wrap_s>
+				<wrap_t>CLAMP_TO_EDGE</wrap_t>
+			</texture>
+
 			<texture id="4" type="2d">
 				<file>Croco.tga</file>			
 				<min_filter>LINEAR</min_filter>
@@ -82,22 +112,22 @@
 				<wrap_s>CLAMP_TO_EDGE</wrap_s>
 				<wrap_t>CLAMP_TO_EDGE</wrap_t>
 			</texture>
-			<texture id="15" type="2d">
-				<file>SCV.tga</file>			
+			<texture id="16" type="2d">
+				<file>Dirt.tga</file>			
 				<min_filter>LINEAR</min_filter>
 				<mag_filter>LINEAR</mag_filter>
 				<wrap_s>REPEAT</wrap_s>
 				<wrap_t>REPEAT</wrap_t>
 			</texture>
 			<texture id="14" type="2d">
-				<file>Witch.tga</file>			
+				<file>Rock.tga</file>			
 				<min_filter>LINEAR</min_filter>
 				<mag_filter>LINEAR</mag_filter>
 				<wrap_s>REPEAT</wrap_s>
 				<wrap_t>REPEAT</wrap_t>
 			</texture>		
-			<texture id="77" type="2d">
-				<file>House.tga</file>
+			<texture id="15" type="2d">
+				<file>Grass.tga</file>
 				<min_filter>LINEAR</min_filter>
 				<mag_filter>LINEAR</mag_filter>
 				<wrap_s>REPEAT</wrap_s>

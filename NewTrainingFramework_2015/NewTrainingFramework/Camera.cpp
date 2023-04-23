@@ -19,7 +19,7 @@ Camera::Camera() {
 	fov = 3.141592f/2.0f; /// 90 de grade
 
 	_near = 0.1f;
-	_far = 10000.0f;
+	_far = 11500.0f;
 
 	deltaTime = 0;
 

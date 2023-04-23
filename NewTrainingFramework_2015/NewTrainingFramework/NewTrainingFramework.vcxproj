@@ -163,6 +163,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Fire.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="Managers.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -177,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Fire.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Managers.h" />
     <ClInclude Include="Model.h" />
@@ -189,6 +191,8 @@
     <None Include="..\..\Readme.doc" />
     <None Include="Res\Shaders\ballShader.fs" />
     <None Include="Res\Shaders\ballShader.vs" />
+    <None Include="Res\Shaders\fireShader.fs" />
+    <None Include="Res\Shaders\fireShader.vs" />
     <None Include="Res\Shaders\normalObjectShader.fs" />
     <None Include="Res\Shaders\normalObjectShader.vs" />
     <None Include="Res\Shaders\skyboxShader.fs" />

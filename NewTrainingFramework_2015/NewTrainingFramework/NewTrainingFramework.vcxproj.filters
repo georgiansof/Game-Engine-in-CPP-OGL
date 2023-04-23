@@ -42,6 +42,9 @@
     <ClCompile Include="Globals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Fire.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Globals.h">
@@ -66,6 +69,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Managers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Fire.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -93,6 +99,12 @@
       <Filter>Resources\Shaders</Filter>
     </None>
     <None Include="Res\Shaders\terrainShader.fs">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="Res\Shaders\fireShader.vs">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="Res\Shaders\fireShader.fs">
       <Filter>Resources\Shaders</Filter>
     </None>
   </ItemGroup>

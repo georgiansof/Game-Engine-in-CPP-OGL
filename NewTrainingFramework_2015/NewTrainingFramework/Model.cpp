@@ -196,4 +196,5 @@ ModelVertex::ModelVertex(ModelVertex const &mv) {
 	this->pos = mv.pos;
 	this->tgt = mv.tgt;
 	this->uv = mv.uv;
+	this->uv2 = mv.uv2;
 }
