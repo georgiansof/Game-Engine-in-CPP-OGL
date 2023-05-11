@@ -5,4 +5,5 @@ using @Gameloft's training framework (containing mostly math interface for Matri
 
 Features: Resource Manager(models, textures, shaders), Scene Manager, Camera, Mouse and Keyboard controls, Skybox, Fog, Terrain, Fire
 
-Photos: to be made when project is finished ( almost finished, working on terrain and fire )
+Photos:
+![alt text]"https://imgur.com/undefined.png"
