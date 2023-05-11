@@ -125,7 +125,7 @@
 		<comment>in interiorul elementelor model, shader, texture, se gaseste id-ul corespunzator resursei din sceneManager.xml
 		Elementul position se refera practic la translatia obiectului.
 		</comment>
-		<object id="1">
+		<object id="2">
 			
 			<model>1</model>
 			<shader>10</shader>
@@ -293,6 +293,11 @@
 				<y>-100</y>
 				<z>0</z>
 			</position>
+			<heights>
+				<r> 50 </r>
+				<g> 15 </g>
+				<b> -15 </b>
+			</heights>
 			<rotation>
 				<x>0.0</x>
 				<y>0.0</y>
@@ -303,13 +308,13 @@
 				<y>1.0</y>
 				<z>1.0</z>
 			</scale>
-			<gridDimension>35</gridDimension>
-			<gridWidth>5250</gridWidth>
-			<gridHeight>5250</gridHeight>
+			<gridDimension>100</gridDimension>
+			<gridWidth>5500</gridWidth>
+			<gridHeight>5500</gridHeight>
 			<!-- <debug/> --> 
 		</object>
 
-		<object id="9">
+		<object id="1">
 			<model>100</model>
 			<name>Skybox</name>
 			<type>skybox</type>
@@ -336,7 +341,7 @@
 			<model>109</model>
 			<name>Fire</name>
 			<type>fire</type>
-			<dispMax>50</dispMax>
+			<dispMax>0.2</dispMax>
 			<position>
 				<x>0</x>
 				<y>-200</y>
@@ -363,8 +368,8 @@
 	
 	<fog>
 		<radiuses>
-			<small>3000</small>
-			<big>4000</big>
+			<small>2500</small>
+			<big>3500</big>
 		</radiuses>
 		<color blend = "true">
 			<r>0.0</r>

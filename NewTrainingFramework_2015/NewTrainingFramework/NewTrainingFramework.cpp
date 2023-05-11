@@ -238,7 +238,7 @@ void Update ( ESContext *esContext, float deltaTime )
 	for (auto& x : sceneManager->getAllSceneObjects()) 
 		if (x.second->type == SceneObject::FIRE) {
 			Fire *fire = static_cast<Fire*>(x.second);
-			fire->UpdateTimer(deltaTime/1000.0f);
+ 			fire->UpdateTimer(deltaTime/1000.0f * 500.0f);
 		}
 }
 

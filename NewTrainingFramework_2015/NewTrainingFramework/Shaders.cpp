@@ -53,6 +53,7 @@ int Shader::Init(char * fileVertexShader, char * fileFragmentShader, int nr_text
 	
 	timeUniform = glGetUniformLocation(program, "u_time");
 	dispMaxUniform = glGetUniformLocation(program, "u_dispMax");
+	terrainHeightUniform = glGetUniformLocation(program, "u_height");
 
 	return 0;
 }
@@ -83,6 +84,7 @@ Shader::Shader() {
 	uv2Attribute = -1;
 	timeUniform = -1;
 	dispMaxUniform = -1;
+	terrainHeightUniform = -1;
 }
 
 Shader::Shader(string FSpath, string VSpath) {

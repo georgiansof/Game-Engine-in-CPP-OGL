@@ -209,6 +209,7 @@ public:
 	};
 private:
 	std::string gameName;
+	Vector3 terrain_heights;
 	static SceneManager* smInstance;
 	struct ScreenSize {
 		int width;
@@ -228,7 +229,7 @@ private:
 	} fog;
 	struct { Vector3 Ox, Oy, Oz; } objAxesColor, camAxesColor;
 
-	std::unordered_map<int, SceneObject*> sceneObjects;
+	std::map<int, SceneObject*> sceneObjects;
 	void ParseNode(rapidxml::xml_node<>* pNode, std::string additive_relative_path);
 	SceneManager();
 	~SceneManager();
@@ -249,8 +250,9 @@ public:
 	int setActiveCamera(Camera* cam);
 	SceneObject* getSceneObject(int id);
 	SceneObject* getSceneObjectByType(SceneObject::objType type);
-	std::unordered_map<int, SceneObject*>& getAllSceneObjects();
+	std::map<int, SceneObject*>& getAllSceneObjects();
 	float getFogBigRadius();
 	float getFogSmallRadius();
 	int addCamera(int id, Camera* cam);
+	friend SceneObject;
 };

@@ -31,6 +31,7 @@ public:
 	GLint uv2Attribute;
 	GLint timeUniform;
 	GLint dispMaxUniform;
+	GLint terrainHeightUniform;
 
 	int Init(char * fileVertexShader, char * fileFragmentShader, int nr_textures);
 	int Init(int nr_textures);

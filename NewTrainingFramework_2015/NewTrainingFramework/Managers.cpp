@@ -870,7 +870,7 @@ void SceneManager::ParseNode(xml_node<>* pNode, string additive_relative_path) {
 																										else
 																											if (strcmp(_strlwr(z->name()), "oz") == 0)
 																												objptr->followingCamera.z = 1;
-																											else
+																											else																						
 																												;
 																							}
 																							else
@@ -889,7 +889,19 @@ void SceneManager::ParseNode(xml_node<>* pNode, string additive_relative_path) {
 																												if(strcmp(_strlwr(r->name()), "dispmax") == 0)
 																													dispMax = atof(r->value());
 																												else
-																													;
+																													if (strcmp(_strlwr(r->name()), "heights") == 0) {
+																														for (xml_node<>* clr = r->first_node(); clr; clr = clr->next_sibling())
+																															if (strcmp(_strlwr(clr->name()), "r") == 0)
+																																SceneManager::getInstance()->terrain_heights.x = atof(clr->value());
+																															else
+																																if (strcmp(_strlwr(clr->name()), "g") == 0)
+																																	SceneManager::getInstance()->terrain_heights.y = atof(clr->value());
+																																else
+																																	if (strcmp(_strlwr(clr->name()), "b") == 0)
+																																		SceneManager::getInstance()->terrain_heights.z = atof(clr->value());
+																													}
+																													else
+																														;
 											if(objptr->type == SceneObject::SKYBOX) {
 												SkyBox *sb = new SkyBox(objptr, verticalOffset);
 												delete objptr;
@@ -1121,7 +1133,7 @@ float SceneManager::getFogSmallRadius() {
 	return this->fog.smallRadius;
 }
 
-unordered_map<int, SceneObject*>& SceneManager::getAllSceneObjects() {
+map<int, SceneObject*>& SceneManager::getAllSceneObjects() {
 	return this->sceneObjects;
 }
 
@@ -1328,6 +1340,10 @@ int SceneObject::Draw(Matrix &vp) {
 	if (this->shader->bigRadius != -1)
 		glUniform1f(this->shader->bigRadius, SceneManager::getInstance()->getFogBigRadius());
 	
+	if (this->shader->terrainHeightUniform != -1) {
+		glUniform3f(this->shader->terrainHeightUniform, (GLfloat)(SceneManager::getInstance()->terrain_heights.x), (GLfloat)(SceneManager::getInstance()->terrain_heights.y), (GLfloat)(SceneManager::getInstance()->terrain_heights.z));
+	}
+
 	if (this->type == SceneObject::FIRE) {
 		Fire *fire = static_cast<Fire*> (this);
 		if (fire->shader->dispMaxUniform != -1)
