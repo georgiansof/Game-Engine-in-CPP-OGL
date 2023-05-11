@@ -6,6 +6,6 @@ using @Gameloft's training framework (containing mostly math interface for Matri
 Features: Resource Manager(models, textures, shaders), Scene Manager, Camera, Mouse and Keyboard controls, Skybox, Fog, Terrain, Fire
 
 Photos:
-![alt text](https://imgur.com/undefined.png) \
+![alt text](https://imgur.com/u9p6aVa.png) \
 XML preview:
 ![alt text](https://imgur.com/waueH6h.png)
